@@ -1,0 +1,63 @@
+name: working_project
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.14.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  flutter_localizations:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.3
+  google_maps_flutter: ^2.1.1
+  http: ^0.13.3
+  universal_io: ^2.0.4
+  intl: ^0.17.0
+  cloud_firestore: ^3.1.0
+  firebase_core: ^1.10.0
+  firebase_auth: ^3.2.0
+  flutter_form_builder: ^6.0.1
+  get: ^4.3.8
+  get_storage: ^2.0.3
+  photo_view: ^0.13.0
+  equatable: ^2.0.3
+  flutter_riverpod: ^1.0.0-dev.7
+  flutter_svg: ^0.22.0
+  logger: ^1.0.0
+  rxdart: ^0.27.1
+  shared_preferences: ^2.0.9
+  state_notifier: ^0.7.0
+  google_sign_in:
+  google_sign_in_web: ^0.10.0+3
+  google_fonts: ^2.0.0
+  video_player: ^2.2.6
+
+dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  build_runner: ^1.11.5
+  mocktail: ^0.1.4
+  random_string: ^2.2.0-nullsafety
+  test: ^1.16.5
+  flutter_lints: ^1.0.4
+
+
+# The following section is specific to Flutter.
+flutter:
+  assets:
+    - assets/
+    - assets/images/
+    - assets/icons/
+
+  # the material Icons class.
+  uses-material-design: true
+  generate: true # Add this line
