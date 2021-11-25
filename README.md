@@ -1,30 +1,20 @@
-# Starter Architecture Demo for Flutter & Firebase Realtime Apps
+# Flutter & Firebase Realtime Apps
 
-This is a **reference architecture demo** that can be used as a **starting point** for apps using Flutter & Firebase.
+This is a **Shipper app** that can be used as a **shipper hooker** using Flutter & Firebase.
 
-*Also see my [codewithandrea_flutter_packages repo](https://github.com/bizz84/codewithandrea_flutter_packages), which contains the most reusable parts of this project as packages.*
+*Go [drawsql.app/c-5/diagrams/working-project](https://drawsql.app/c-5/diagrams/working-project) to see the database structure of this project.*
 
-## Motivation
+## Disclaimer
 
-Flutter & Firebase are a great combo for getting apps to market in record time.
+Flutter & Firebase are hard af, to be fair
 
-Without a sound architecture, codebases can quickly become hard to test, maintain, and **reason about**. This **severely** impacts the development speed, and results in buggy products, sad developers and unhappy users.
-
-I have already witnessed this first-hand with various client projects, where the lack of a formal architecture led to days, weeks - even **months** of extra work.
-
-Is "architecture" hard? How can one find the "right" or "correct" architecture in the ever-changing landscape of front-end development?
-
-Every app has different requirements, so does the "right" architecture even exist in the first place?
-
-While I don't claim to have a silver bullet, I have refined and fine-tuned a **production-ready** architecture that I have deployed successfully into multiple Flutter & Firebase apps. 
-
-I call this "**Stream-based** Architecture for Flutter & Firebase **Realtime** Apps".
+I call this "**working_project** which using Flutter & Firebase **Realtime** Apps" because i couldnt think of a good name.
 
 ## Stream-based Architecture for Flutter & Firebase Realtime Apps
 
 Two words are key here: **Stream** and **Realtime**.
 
-Unlike with traditional REST APIs, with Firebase we can build **realtime** apps.
+Unlike with traditional REST APIs, using Firebase this app is **realtime**.
 
 That's because Firebase can **push** updates directly to **subscribed** clients when something changes.
 
@@ -122,23 +112,19 @@ Strictly speaking, we can introduce a distinction:
 
 This project contains a demo app as a practical implementation of this architecture.
 
-## Demo App: Time Tracker
+## Demo App: maybe i should rename it something meaningfull
 
-The demo app is a time tracking application. It is complex enough to capture the various nuances of state management across multiple features. Here is a preview of the main screens:
+Tables:
 
-![](media/time-tracker-screenshots.png)
+![](media/1.png)
 
-After signing in, users can view, create, edit and delete their jobs. For each job they can view, create, edit and delete the corresponding entries.
+Main screens:
 
-A separate screen shows a daily breakdown of all jobs, hours worked and pay, along with the totals.
-
-All the data is persisted with Firestore, and is kept in sync across multiple devices. 
+![](media/ok.png)
 
 ## Riverpod
 
 [Riverpod](https://pub.dev/packages/riverpod) is a rewrite of the popular [Provider package](https://pub.dev/packages/provider), and improves on its weaknesses. It is a natural fit for this app.
-
-Riverpod can be used to create **global** providers that are not tied to the widget tree, and these can then be accessed by **reference**. In this sense, Riverpod works more like a **service locator**.
 
 ### Creating Providers with Riverpod
 
