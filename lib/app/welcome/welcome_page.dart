@@ -30,12 +30,15 @@ class WelcomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     print('WelcomePage');
     var scaffold1 = Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            const Spacer(flex: 2),
-            Image.asset("assets/images/welcome_image.png"),
-            const Spacer(flex: 3),
+            const SizedBox(height: 20),
+            ConstrainedBox(constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width),
+                child: Image.asset('assets/images/welcome_image.png'),
+            ),
+            const SizedBox(height: 30),
             Text(
               "Welcome to our \n AloShip app",
               textAlign: TextAlign.center,
@@ -44,7 +47,7 @@ class WelcomePage extends ConsumerWidget {
                   .headline5
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
-            const Spacer(),
+            const SizedBox(height: 20),
             Text(
               "Freedom book an shipper of your \n requirements.",
               textAlign: TextAlign.center,
@@ -56,7 +59,7 @@ class WelcomePage extends ConsumerWidget {
                     ?.withOpacity(0.64),
               ),
             ),
-            const Spacer(flex: 3),
+            const SizedBox(height: 30),
             FittedBox(
               child: TextButton(
                   onPressed: () => onGetStarted(context, ref),
@@ -65,12 +68,12 @@ class WelcomePage extends ConsumerWidget {
                       Text(
                         "Skip",
                         style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1
-                                  ?.color
-                                  ?.withOpacity(0.8),
-                            ),
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyText1
+                              ?.color
+                              ?.withOpacity(0.8),
+                        ),
                       ),
                       const SizedBox(width: kDefaultPadding / 4),
                       Icon(

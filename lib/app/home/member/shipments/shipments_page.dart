@@ -117,6 +117,9 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
               return const Center(child: CircularProgressIndicator());
             }
           }),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        print('fab clicked');
+      }),
     );
   }
 }

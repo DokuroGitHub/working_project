@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/app/sign_in/sign_in_view_model.dart';
 import '/constants/keys.dart';
@@ -17,14 +18,14 @@ class SignInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SignInPageContents(
       viewModel: signInModel,
-      title: 'Sign in',
+      title: AppLocalizations.of(context)!.signIn,
     );
   }
 }
 
 class SignInPageContents extends StatelessWidget {
   const SignInPageContents(
-      {Key? key, required this.viewModel, this.title = 'Title here'})
+      {Key? key, required this.viewModel, this.title = 'Sign in page'})
       : super(key: key);
   final SignInViewModel viewModel;
   final String title;
@@ -106,7 +107,7 @@ class SignInPageContents extends StatelessWidget {
               ElevatedButton(onPressed: viewModel.isLoading
                   ? null
                   : () => viewModel.signInWithGoogle(),
-                  child: const Text('Google Sign In')),
+                  child: Text('Google '+AppLocalizations.of(context)!.signIn)),
               const SizedBox(height: 8),
               const Text(
                 Strings.or,
@@ -115,8 +116,7 @@ class SignInPageContents extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               ElevatedButton(onPressed: viewModel.isLoading ? null : viewModel.signInAnonymously,
-                  child: const Text(Strings.goAnonymous)),
-              //TODO 24_10
+                  child: Text(AppLocalizations.of(context)!.goAnonymous)),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: (){
