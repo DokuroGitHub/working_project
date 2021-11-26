@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:working_project/app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
+import 'package:working_project/models/shipment.dart';
 import '/app/home/feedbacks/feedbacks_page.dart';
 import '/app/home/member/posts/edit_post_page.dart';
 import '/app/home/member/shipments/shipment_details/shipment_details_page.dart';
@@ -12,11 +14,10 @@ class AppRoutes {
   static const signInPage = '/sign-in-page';
   static const emailPasswordSignInPage = '/email-password-sign-in-page';
   static const finishMyUserInfoPage = '/finish-my-user-info-page';
-  static const editJobPage = '/edit-job-page';
-  static const entryPage = '/entry-page';
   static const editPostPage = '/edit-post-page';
   static const messagesPage = '/messages-page';
   static const shipmentDetailsPage = '/shipment-details-page';
+  static const editShipmentPage = '/edit-shipment-page';
   static const feedbacksPage = '/feedbacks-page';
 }
 
@@ -70,7 +71,18 @@ class AppRouter {
           settings: settings,
           fullscreenDialog: true,
         );
-      //TODO:  ShipmentDetailsPage(myUser: myUser, shipmentId: shipmentId)
+    //TODO:  ShipmentDetailsPage(myUser: myUser, shipmentId: shipmentId)
+      case AppRoutes.editShipmentPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final myUser = mapArgs['myUser'] as MyUser;
+        final shipment = mapArgs['shipment'] as Shipment?;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) =>
+              EditShipmentPage(myUser: myUser, shipment: shipment),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      //TODO:
       case AppRoutes.feedbacksPage:
         final mapArgs = args as Map<String, dynamic>;
         final myUser = mapArgs['myUser'] as MyUser;

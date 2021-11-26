@@ -68,21 +68,19 @@ class DatabaseService {
 
   //TODO: getStreamListMyUse
   Stream<List<MyUser>> getStreamListMyUser() {
-    return FirebaseFirestore.instance
-        .collection('my_user')
-        .snapshots()
-        .map(
+    return FirebaseFirestore.instance.collection('my_user').snapshots().map(
         (snapshot) => snapshot.docs
             .map((doc) => MyUser.fromMap(doc.data(), doc.id))
             .toList());
   }
 
   //TODO: getStreamListMyUserByPhoneNumberPart
-  Stream<List<MyUser>> getStreamListMyUserBySomePart(String field, String searchKey) {
+  Stream<List<MyUser>> getStreamListMyUserBySomePart(
+      String field, String searchKey) {
     return FirebaseFirestore.instance
         .collection('my_user')
         .where(field, isGreaterThanOrEqualTo: searchKey)
-        .where(field, isLessThan: searchKey +'z')
+        .where(field, isLessThan: searchKey + 'z')
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => MyUser.fromMap(doc.data(), doc.id))
@@ -154,12 +152,13 @@ class DatabaseService {
     switch (query) {
       case FeedBackQuery.createdAtAsc:
       case FeedBackQuery.createdAtDesc:
-        newQuery =
-            ref.orderBy('createdAt', descending: query == FeedBackQuery.createdAtDesc);
+        newQuery = ref.orderBy('createdAt',
+            descending: query == FeedBackQuery.createdAtDesc);
         break;
       case FeedBackQuery.ratingAsc:
       case FeedBackQuery.ratingDesc:
-        newQuery = ref.orderBy('rating', descending: query == FeedBackQuery.ratingDesc);
+        newQuery = ref.orderBy('rating',
+            descending: query == FeedBackQuery.ratingDesc);
         break;
       default:
         newQuery = ref;
@@ -172,9 +171,13 @@ class DatabaseService {
 
   //TODO: ------------------- Post -----------------------------
   //TODO: addPost
-  Future<void> addPost(Map<String, dynamic> postMap) async {
-    FirebaseFirestore.instance.collection('post').add(postMap).then((ref) {
+  Future<String?> addPost(Map<String, dynamic> postMap) async {
+    return FirebaseFirestore.instance.collection('post').add(postMap).then((ref) {
       print('added ${ref.path}');
+      return ref.id;
+    },onError: (dynamic error){
+      print('added post failed, error: $error');
+      return null;
     });
   }
 
@@ -291,12 +294,14 @@ class DatabaseService {
 
   //TODO: ------------------- Shipment -----------------------------
   //TODO: addShipment
-  Future<void> addShipment(Map<String, dynamic> shipmentMap) async {
-    FirebaseFirestore.instance
-        .collection('shipment')
-        .add(shipmentMap)
-        .then((ref) {
+  Future<String?> addShipment(Map<String, dynamic> shipmentMap) async {
+    return FirebaseFirestore.instance.collection('shipment').add(shipmentMap).then(
+        (ref) {
       print('added ${ref.path}');
+      return ref.id;
+    }, onError: (dynamic error) {
+      print('added failed, error: $error}');
+      return null;
     });
   }
 

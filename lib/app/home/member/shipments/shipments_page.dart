@@ -22,7 +22,8 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
   Color fbBlue = const Color(0xFF2D88FF);
   Color mainGrey = const Color(0xFF505050);
 
-  Future<void> _showShipmentDetailsPage(BuildContext context, String? shipmentId) async {
+  Future<void> _showShipmentDetailsPage(
+      BuildContext context, String? shipmentId) async {
     await Navigator.of(context, rootNavigator: true).pushNamed(
       AppRoutes.shipmentDetailsPage,
       arguments: {
@@ -32,10 +33,21 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
     );
   }
 
-  Widget _shipmentItem(BuildContext context ,Shipment shipment) {
+  Future<void> _showEditShipmentPage(BuildContext context) async {
+    await Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.editShipmentPage,
+      arguments: {
+        'myUser': widget.myUser,
+        'shipment': null,
+      },
+    );
+  }
+
+  Widget _shipmentItem(BuildContext context, Shipment shipment) {
     return GestureDetector(
-      onTap: (){
-        print('shipments_page, _shipmentItem, tap Shipment.id: ${shipment.id!}');
+      onTap: () {
+        print(
+            'shipments_page, _shipmentItem, tap Shipment.id: ${shipment.id!}');
         //TODO: qua trang details
         _showShipmentDetailsPage(context, shipment.id!);
       },
@@ -98,8 +110,7 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
       //TODO: list shipments
       body: StreamBuilder(
           stream: DatabaseService().getStreamListShipment(),
-          builder:
-              (BuildContext ctx, AsyncSnapshot<List<Shipment>> snapshot) {
+          builder: (BuildContext ctx, AsyncSnapshot<List<Shipment>> snapshot) {
             if (snapshot.hasError) {
               print('shipments,  shipments has error: ${snapshot.error}');
               return Container();
@@ -117,9 +128,12 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
               return const Center(child: CircularProgressIndicator());
             }
           }),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        print('fab clicked');
-      }),
+      floatingActionButton: FloatingActionButton(
+          tooltip: 'Thêm mới shipment',
+          child: const Icon(Icons.add),
+          onPressed: () {
+            _showEditShipmentPage(context);
+          }),
     );
   }
 }

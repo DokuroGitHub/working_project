@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-import '/app/home/member/shipments/shipment_details/components/shipment_attachments.dart';
+import '/routing/app_router.dart';
+import 'shipment_attachments.dart';
 import '/common_widgets/avatar.dart';
 import '/constants/ui.dart';
 import '/models/feedback.dart';
@@ -22,6 +23,16 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+
+  Future<void> _showEditShipmentPage(BuildContext context) async {
+    await Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.editShipmentPage,
+      arguments: {
+        'myUser': widget.myUser,
+        'shipment': widget.shipment,
+      },
+    );
+  }
 
   Widget _circleAvatar({String? photoURL}) {
     return CircleAvatar(
@@ -261,8 +272,13 @@ class _BodyState extends State<Body> {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Icon(Icons.phone),
                 const SizedBox(width: 10),
-                Text(
-                    'Sđt người đưa hàng: ${widget.shipment.parcel!.phoneFrom ?? ''}'),
+                const Text('Sđt người đưa hàng: '),
+                TextButton(
+                  child: Text(widget.shipment.parcel!.phoneFrom ?? ''),
+                  onPressed: () {
+
+                  },
+                ),
               ]),
               const SizedBox(height: 10),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -275,8 +291,13 @@ class _BodyState extends State<Body> {
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Icon(Icons.phone),
                 const SizedBox(width: 10),
-                Text(
-                    'Sđt người nhận hàng: ${widget.shipment.parcel!.phoneTo ?? ''}'),
+                const Text('Sđt người nhận hàng: '),
+                TextButton(
+                    child: Text(widget.shipment.parcel!.phoneTo ?? ''),
+                    onPressed: () {
+
+                    },
+                ),
               ]),
               const SizedBox(height: 10),
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -631,8 +652,26 @@ class _BodyState extends State<Body> {
           Row(children: const [Icon(Icons.chat), Text('Chat')]),
         ]),
       ]),
+      floatingActionButton: FloatingActionButton(child: const Icon(Icons.edit),
+        onPressed: () {
+          if(widget.shipment.status=='DANGTIMSHIPPER') {
+            //TODO: go to edit
+            _showEditShipmentPage(context);
+          }else{
+            final snackBar = SnackBar(
+              content: const Text('Shipment đang trong giai đoạn thực hiện, không thể chỉnh sửa !'),
+              action: SnackBarAction(
+                label: 'Ok',
+                onPressed: () {
+                  // Some code to undo the change.
+                },
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        },
+      ),
     );
   }
-}
 
-Color myGreen = const Color(0xff4bb17b);
+}
