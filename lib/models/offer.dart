@@ -5,7 +5,7 @@ class Offer {
   DateTime createdAt;
   String createdBy;
   String? notes;
-  int price;
+  num price;
 
   Offer(
       {this.id,
@@ -34,7 +34,7 @@ class Offer {
       createdAt: createdAt,
       createdBy: createdBy,
       notes: json['notes'] as String?,
-      price: json['price'] as int? ?? 0,
+      price: json['price'] as num? ?? 0,
     );
   }
 

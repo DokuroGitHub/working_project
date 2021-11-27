@@ -31,7 +31,7 @@ class PostBox extends StatelessWidget {
         emoteCode: emoteCode,
       );
       //TODO: add
-      DatabaseService().addEmoteWithId(myUser.id!, documentPath, x.toMap());
+      DatabaseService().addEmoteToPost(postId: post.id!, myUserId: myUser.id!, emoteMap: x.toMap());
     } else {
       //TODO: delete
       DatabaseService().deleteEmote(documentPath, emote.id!);
