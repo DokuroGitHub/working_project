@@ -7,8 +7,6 @@ import '/models/my_user.dart';
 import '/models/post.dart';
 import '/services/database_service.dart';
 
-import 'components/actionbtn.dart';
-
 class PostsPage extends StatefulWidget {
   const PostsPage({required this.myUser});
 
@@ -42,27 +40,22 @@ class _PostsPageState extends State<PostsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //let's add the  bg color
-      backgroundColor: bgBlack,
+      backgroundColor: Theme.of(context).backgroundColor,
       //let's add the app bar
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: mainBlack,
-        title: Text(
-          "Facebook",
-          style: TextStyle(
-            color: fbBlue,
-          ),
-        ),
-        //Now let's add the action button
+        //backgroundColor: mainBlack,
+        title: Text('Facebook', style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.search),
+            color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           ),
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.menu),
+            color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           ),
         ],
       ),
@@ -79,7 +72,7 @@ class _PostsPageState extends State<PostsPage> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: mainBlack,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Padding(
@@ -96,15 +89,12 @@ class _PostsPageState extends State<PostsPage> {
                           const SizedBox(width: 10.0),
                           Expanded(
                             child: TextField(
-                              style: const TextStyle(
-                                color: Colors.white,
-                              ),
                               decoration: InputDecoration(
                                   contentPadding:
                                       const EdgeInsets.only(left: 25.0),
                                   hintText: "Post something...",
                                   filled: true,
-                                  fillColor: mainGrey,
+                                  fillColor: Theme.of(context).bannerTheme.backgroundColor,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(30.0),
                                     borderSide: BorderSide.none,
@@ -116,19 +106,40 @@ class _PostsPageState extends State<PostsPage> {
                       const SizedBox(
                         height: 5.0,
                       ),
-                      Divider(
-                        color: mainGrey,
-                        thickness: 1.5,
-                      ),
+                      const Divider(thickness: 1.5),
                       //Now we will create a Row of three button
                       Row(
                         children: [
-                          actionButton(
-                              Icons.live_tv, "Live", const Color(0xFFF23E5C)),
-                          actionButton(
-                              Icons.image, "Picture", const Color(0xFF58C472)),
-                          actionButton(Icons.insert_emoticon, "Activity",
-                              const Color(0xFFF8C03E)),
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: (){},
+                              icon: const Icon(
+                                Icons.live_tv,
+                                color: Color(0xFFF23E5C),
+                              ),
+                              label: Text('Live',  style: Theme.of(context).textTheme.button),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: (){},
+                              icon: const Icon(
+                                Icons.image,
+                                color: Color(0xFF58C472),
+                              ),
+                              label: Text('Picture', style: Theme.of(context).textTheme.button),
+                            ),
+                          ),
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: (){},
+                              icon: const Icon(
+                                Icons.insert_emoticon,
+                                color: Color(0xFFF8C03E),
+                              ),
+                              label: Text('Activity', style: Theme.of(context).textTheme.button),
+                            ),
+                          ),
                         ],
                       )
                     ],

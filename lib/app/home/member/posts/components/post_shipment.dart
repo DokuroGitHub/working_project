@@ -6,7 +6,6 @@ import '/models/parcel.dart';
 import '/models/shipment.dart';
 import '/services/database_service.dart';
 
-import 'actionbtn.dart';
 import 'my_user_avatar.dart';
 
 class PostShipment extends StatelessWidget {
@@ -22,7 +21,6 @@ class PostShipment extends StatelessWidget {
     return Text(
       text,
       style: const TextStyle(
-        color: Colors.white,
         fontSize: 16.0,
         fontWeight: FontWeight.w400,
       ),
@@ -226,11 +224,19 @@ class PostShipment extends StatelessWidget {
         //TODO: btn add
         Row(
           children: [
-            actionButton(Icons.library_add, shipment.shippersEnrolled.contains(myUser.id!)?'Out':'Enroll', const Color(0xFF505050),
-                onTap: () {
-              print('tap Enroll btn');
-                _enroll(myUser.id!, shipment.id!);
-            }),
+            Expanded(
+              child: TextButton.icon(
+                onPressed: (){
+                  print('tap Enroll btn');
+                  _enroll(myUser.id!, shipment.id!);
+                },
+                icon: const Icon(
+                  Icons.library_add,
+                  color: Color(0xFF505050),
+                ),
+                label: Text(shipment.shippersEnrolled.contains(myUser.id!)?'Out':'Enroll'),
+              ),
+            ),
           ],
         )
       ],

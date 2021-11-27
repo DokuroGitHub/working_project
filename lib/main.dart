@@ -6,6 +6,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:working_project/services/database_service.dart';
 import 'package:working_project/some_unused_page.dart';
+import 'app/home/member/posts/posts_page.dart';
 import 'app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
 import 'app/home/member/shipments/shipment_details/shipment_details_page.dart';
 import 'app/home/member/shipments/shipments_page.dart';
@@ -35,7 +36,7 @@ Future<void> main() async {
         SharedPreferencesService(await SharedPreferences.getInstance()),
       ),
     ],
-    child: MyApp(),
+    child: MyAppForTestPages(),
   ));
 }
 
@@ -115,9 +116,13 @@ class TestPage extends StatelessWidget {
                       actions: [
                         IconButton(
                           icon: const Icon(Icons.lightbulb),
+                          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
                           onPressed: ThemeService().switchTheme,
                         ),
                         PopupMenuButton<String>(
+                          icon: Icon(Icons.more_vert,
+                            color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                          ),
                           onSelected: LocaleService().changeLocale,
                           itemBuilder: (BuildContext context) {
                             return [
@@ -151,7 +156,8 @@ class TestPage extends StatelessWidget {
                         const SizedBox(width: 10),
                       ],
                     ),
-                    body: ShipmentsPage(myUser: myUser),
+                    //TODO: page to test
+                    body: PostsPage(myUser: myUser),
                   );
                 }
                 return Container();

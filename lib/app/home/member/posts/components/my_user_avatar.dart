@@ -42,7 +42,7 @@ class MyUserAvatar extends StatelessWidget {
                         color: Colors.greenAccent,
                         shape: BoxShape.circle,
                         border: Border.all(
-                            color: Theme.of(context).scaffoldBackgroundColor,
+                            color: Theme.of(context).canvasColor,
                             width: 2),
                       ),
                     ),

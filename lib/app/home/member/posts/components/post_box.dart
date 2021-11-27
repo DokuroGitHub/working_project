@@ -9,7 +9,6 @@ import '/models/post.dart';
 import '/models/shipment.dart';
 import '/services/database_service.dart';
 
-import 'actionbtn.dart';
 import 'my_user_avatar.dart';
 import 'my_user_name.dart';
 
@@ -126,7 +125,7 @@ class PostBox extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),
-        color: const Color(0xFF262626),
+        color: Theme.of(context).cardColor
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -171,7 +170,6 @@ class PostBox extends StatelessWidget {
                           child: Text(
                             post.createdAt.toString(),
                             style: const TextStyle(
-                              color: Colors.white,
                               fontSize: 16.0,
                               fontWeight: FontWeight.w400,
                             ),
@@ -189,7 +187,7 @@ class PostBox extends StatelessWidget {
             if (post.text != null)
               Row(children: [
                 Text(post.text!,
-                    style: const TextStyle(color: Colors.white, fontSize: 16.0))
+                    style: const TextStyle(fontSize: 16.0))
               ]),
             const SizedBox(height: 10.0),
             //TODO: content
@@ -197,24 +195,34 @@ class PostBox extends StatelessWidget {
 
             const Divider(
               thickness: 1.5,
-              color: Color(0xFF505050),
             ),
             //TODO: like+comment+share
             Row(
               children: [
-                actionButton(Icons.thumb_up, "Like", const Color(0xFF505050),
-                    onTap: () {
-                  print('tap like btn');
-                  postEmote('LIKE');
-                }),
-                actionButton(Icons.comment, "Reply", const Color(0xFF505050),
-                    onTap: () {
-                  print('tap comment btn');
-                }),
-                actionButton(Icons.share, "Share", const Color(0xFF505050),
-                    onTap: () {
-                  print('tap share btn');
-                }),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: (){
+                      print('tap like btn');
+                      postEmote('LIKE');
+                    },
+                    icon: Icon(Icons.thumb_up_outlined, color: Theme.of(context).textTheme.button?.color),
+                    label: Text('Like', style: Theme.of(context).textTheme.button),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: (){},
+                    icon: Icon(Icons.comment, color: Theme.of(context).textTheme.button?.color),
+                    label: Text('Reply', style: Theme.of(context).textTheme.button),
+                  ),
+                ),
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: (){},
+                    icon: Icon(Icons.share, color: Theme.of(context).textTheme.button?.color),
+                    label: Text('Share', style: Theme.of(context).textTheme.button),
+                  ),
+                ),
               ],
             )
           ],

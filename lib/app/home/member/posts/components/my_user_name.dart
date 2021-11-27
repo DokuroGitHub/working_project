@@ -13,7 +13,6 @@ class MyUserName extends StatelessWidget {
     return Text(
       name??'',
       style: const TextStyle(
-        color: Colors.white,
         fontSize: 18.0,
         fontWeight: FontWeight.w600,
       ),
