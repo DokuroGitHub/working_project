@@ -72,7 +72,7 @@ class _FeedBacksPageState extends State<FeedBacksPage> {
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Column(children: [
-          MyUserAvatar(myUserId: widget.myUserId2),
+          MyUserAvatar(myUser:null,myUserId: widget.myUserId2),
           const SizedBox(height: kDefaultPadding * 0.75),
           StreamBuilder(
             stream:

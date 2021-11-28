@@ -89,6 +89,7 @@ class _ChatsPageState extends State<ChatsPage> {
     if (members.length == 1) {
       print('group tru minh ra, con 1 nguoi');
       return MyUserAvatar(
+        myUser: null,
           myUserId: members[0],
           onTap: () {
             print('tap photo');

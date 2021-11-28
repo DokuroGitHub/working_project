@@ -280,6 +280,7 @@ class _PostBoxState extends State<PostBox> {
               children: [
                 //TODO: img
                 MyUserAvatar(
+                  myUser: null,
                     myUserId: widget.post.createdBy,
                     onTap: () {
                       print('tap avatar');
@@ -327,6 +328,7 @@ class _PostBoxState extends State<PostBox> {
             const SizedBox(height: 10.0),
             //TODO: content
             _content(),
+            //TODO: row 3 counts, row 3 buttons
             Stack(
               children: [
                 Column(
@@ -475,6 +477,30 @@ class _PostBoxState extends State<PostBox> {
                     ],
                   ),
               ],
+            ),
+            const Divider(thickness: 1.5),
+            Row(
+              children: [
+                MyUserAvatar(myUser: widget.myUser, myUserId: null),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                        contentPadding:
+                        const EdgeInsets.only(left: 25.0),
+                        hintText: 'Viết bình luận công khai',
+                        filled: true,
+                        fillColor: Theme.of(context).bannerTheme.backgroundColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          borderSide: BorderSide.none,
+                        )),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 5.0,
             ),
           ],
         ),

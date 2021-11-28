@@ -125,6 +125,7 @@ class _PostShipmentState extends State<PostShipment> {
       for (var item in widget.shipment.shippersEnrolled) {
         shippersEnrolled.add(Row(children: [
           MyUserAvatar(
+            myUser: null,
               myUserId: item,
               onTap: () {
                 print('tap avatar of user: $item');
@@ -136,6 +137,7 @@ class _PostShipmentState extends State<PostShipment> {
       for (int index in [0, 4]) {
         shippersEnrolled.add(Row(children: [
           MyUserAvatar(
+            myUser: null,
               myUserId: widget.shipment.shippersEnrolled[index],
               onTap: () {
                 print(
@@ -146,6 +148,7 @@ class _PostShipmentState extends State<PostShipment> {
       }
       shippersEnrolled.add(Row(children: [
         MyUserAvatar(
+          myUser: null,
             myUserId: widget.shipment.shippersEnrolled[5],
             onTap: () {
               print(

@@ -144,7 +144,7 @@ class _ContactsPageState extends State<ContactsPage> {
               Row(
                 children: [
                   //TODO: img
-                  MyUserAvatar(myUserId: myUser.id!),
+                  MyUserAvatar(myUser: myUser,myUserId: null),
                   const SizedBox(
                     width: 10.0,
                   ),

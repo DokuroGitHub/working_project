@@ -95,6 +95,7 @@ class _BodyState extends State<Body> {
     if (members.length == 1) {
       print('group tru minh ra, con 1 nguoi');
       return MyUserAvatar(
+        myUser: null,
           myUserId: members[0],
           onTap: () {
             print('tap photo');
@@ -301,6 +302,7 @@ class _BodyState extends State<Body> {
               children: <Widget>[
                 //TODO: sender avatar
                 MyUserAvatar(
+                  myUser: null,
                     myUserId: message.createdBy,
                     onTap: () {
                       print('tap photo, myUserId: ${message.createdBy}');
