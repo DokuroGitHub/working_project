@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:working_project/app/home/account/account_page.dart';
 import 'package:working_project/app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
 import 'package:working_project/models/shipment.dart';
 import '/app/home/feedbacks/feedbacks_page.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const shipmentDetailsPage = '/shipment-details-page';
   static const editShipmentPage = '/edit-shipment-page';
   static const feedbacksPage = '/feedbacks-page';
+  static const accountPage = '/account-page';
 }
 
 class AppRouter {
@@ -82,13 +84,23 @@ class AppRouter {
           settings: settings,
           fullscreenDialog: true,
         );
-      //TODO:
+      //TODO: feedbacksPage
       case AppRoutes.feedbacksPage:
         final mapArgs = args as Map<String, dynamic>;
         final myUser = mapArgs['myUser'] as MyUser;
         final myUserId2 = mapArgs['myUserId2'] as String;
         return MaterialPageRoute<dynamic>(
           builder: (_) => FeedBacksPage(myUser: myUser, myUserId2: myUserId2),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+    //TODO: accountPage
+      case AppRoutes.accountPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final myUser = mapArgs['myUser'] as MyUser;
+        final myUserId2 = mapArgs['myUserId2'] as String;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => AccountPage(myUser: myUser, myUserId2: myUserId2),
           settings: settings,
           fullscreenDialog: true,
         );

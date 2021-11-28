@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:working_project/app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
+import 'package:working_project/app/home/member/shipments/shipment_details/shipment_details_page.dart';
 
 import '/models/my_user.dart';
 import '/models/shipment.dart';
-import '/routing/app_router.dart';
 import '/services/database_service.dart';
 
 class ShipmentsPage extends StatefulWidget {
@@ -22,25 +23,12 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
   Color fbBlue = const Color(0xFF2D88FF);
   Color mainGrey = const Color(0xFF505050);
 
-  Future<void> _showShipmentDetailsPage(
-      BuildContext context, String? shipmentId) async {
-    await Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.shipmentDetailsPage,
-      arguments: {
-        'myUser': widget.myUser,
-        'shipmentId': shipmentId,
-      },
-    );
+  Future<void> _showShipmentDetailsPage(BuildContext context, String shipmentId) async {
+    await ShipmentDetailsPage.showPlz(context: context, myUser: widget.myUser, shipmentId: shipmentId);
   }
 
   Future<void> _showEditShipmentPage(BuildContext context) async {
-    await Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.editShipmentPage,
-      arguments: {
-        'myUser': widget.myUser,
-        'shipment': null,
-      },
-    );
+    await EditShipmentPage.showPlz(context: context, myUser: widget.myUser, shipment: null);
   }
 
   Widget _shipmentItem(BuildContext context, Shipment shipment) {

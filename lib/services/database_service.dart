@@ -118,7 +118,7 @@ class DatabaseService {
   //TODO: getMyUserByDocumentId
   Future<MyUser?> getMyUserByDocumentId(String documentId) {
     return FirebaseFirestore.instance
-        .collection("my_user")
+        .collection('my_user')
         .doc(documentId)
         .get()
         .then((snapshot) {
@@ -206,6 +206,7 @@ class DatabaseService {
   }
 
   //TODO: ------------------- Emote -----------------------------
+  //TODO: ------------------- Emote in Post -----------------------------
   //TODO: addEmoteToPost, new/ko merge   --- nen xai--
   Future<void> addEmoteToPost({required String postId, required String myUserId,
     required Map<String, dynamic> emoteMap}) async {
@@ -217,6 +218,30 @@ class DatabaseService {
     });
   }
 
+  //TODO: getEmoteInPost
+  Future<Emote?> getEmoteInPost({required String postId, required String myUserId}) {
+    return FirebaseFirestore.instance
+        .doc('post/$postId/emotes/$myUserId')
+        .get()
+        .then((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return Emote.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+
+  //TODO: deleteEmoteInPost
+  Future<void> deleteEmoteInPost({required String postId, required String emoteId}) async {
+    var ref = FirebaseFirestore.instance
+        .doc('post/$postId/emotes/$emoteId');
+    ref.delete().whenComplete(() {
+      print('deleted ${ref.path}');
+    });
+  }
+
+  //TODO: ------------------- Emote in Comment -----------------------------
   //TODO: addEmoteToComment, new/ko merge   --- nen xai--
   Future<void> addEmoteToComment({required String myUserId, required String commentPath,
     required Map<String, dynamic> emoteMap}) async {
@@ -229,6 +254,29 @@ class DatabaseService {
     });
   }
 
+  //TODO: getEmoteInComment
+  Future<Emote?> getEmoteInComment({required String commentPath, required String myUserId}) {
+    return FirebaseFirestore.instance
+        .doc('$commentPath/emotes/$myUserId')
+        .get()
+        .then((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return Emote.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+  //TODO: deleteEmoteInComment
+  Future<void> deleteEmoteInComment(String commentPath, String emoteId) async {
+    var ref = FirebaseFirestore.instance
+        .doc('$commentPath/emotes/$emoteId');
+    ref.delete().whenComplete(() {
+      print('deleted ${ref.path}');
+    });
+  }
+
+  //TODO: ------------------- Emote in Message -----------------------------
   //TODO: addEmoteWithId, new/ko merge   --- nen xai--
   Future<void> addEmoteToMessage({required String messageId, required String myUserId,
     required Map<String, dynamic> emoteMap}) async {
@@ -241,20 +289,6 @@ class DatabaseService {
     });
   }
 
-  //TODO: getEmoteByCreatedBy
-  Future<Emote?> getEmoteByCreatedBy(String documentPath, String createdBy) {
-    return FirebaseFirestore.instance
-        .doc(documentPath)
-        .collection('emotes')
-        .where('createdBy', isEqualTo: createdBy)
-        .get()
-        .then((snapshot) {
-      if (snapshot.docs.isEmpty) {
-        return null;
-      }
-      return Emote.fromMap(snapshot.docs.first.data(), snapshot.docs.first.id);
-    });
-  }
 
   //TODO: updateEmote, merge
   Future<void> updateEmote(String myUserId, String documentPath,
@@ -268,16 +302,6 @@ class DatabaseService {
     });
   }
 
-  //TODO: deleteEmote
-  Future<void> deleteEmote(String documentPath, String emoteId) async {
-    var ref = FirebaseFirestore.instance
-        .doc(documentPath)
-        .collection('emotes')
-        .doc(emoteId);
-    ref.delete().whenComplete(() {
-      print('deleted ${ref.path}');
-    });
-  }
 
   //TODO: ------------------- Comment -----------------------------
   //TODO: addComment
@@ -370,6 +394,15 @@ class DatabaseService {
       }
       return Offer.fromMap(snapshot.data(), snapshot.id);
     });
+  }
+
+  //TODO: getStreamListOffer
+  Stream<List<Offer>> getStreamListOffer(String shipmentId) {
+    return FirebaseFirestore.instance
+        .collection('shipment/$shipmentId/offers').snapshots().map(
+            (snapshot) => snapshot.docs
+            .map((doc) => Offer.fromMap(doc.data(), doc.id))
+            .toList());
   }
 
   //TODO: getOffer

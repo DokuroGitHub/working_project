@@ -40,7 +40,7 @@ class _FeedBacksPageState extends State<FeedBacksPage> {
   Future<void> _showMessagesPage(BuildContext context, MyUser myUser, String myUserId2) async {
     if(myUser.id! != myUserId2) {
       //TODO: chua test
-      await MessagesPage.showMessagesPage(context, myUser, myUserId2);
+      await MessagesPage.showPlz(context:context, myUser:myUser, myUserId2:myUserId2);
     }else{
       print('ko the nhan tin cho chinh minh');
     }

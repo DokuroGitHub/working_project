@@ -13,7 +13,8 @@ class MessagesPage extends StatefulWidget {
   final MyUser myUser;
   final String conversationId;
 
-  static Future<void> showMessagesPage(BuildContext context, MyUser myUser, String myUserId2) async {
+  //TODO: messages giua 2 nguoi
+  static Future<void> showPlz({required BuildContext context, required MyUser myUser, required String myUserId2}) async {
     Conversation? conversation = await DatabaseService().getConversationByMeAndSomeone(myUser.id!, myUserId2);
     String conversationId;
     if(conversation!=null){

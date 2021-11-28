@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:working_project/app/home/messages/messages_page.dart';
 
-import '/routing/app_router.dart';
-import 'shipment_attachments.dart';
+import '/app/home/account/account_page.dart';
+
+import '/app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
 import '/common_widgets/avatar.dart';
 import '/constants/ui.dart';
 import '/models/feedback.dart';
@@ -11,6 +15,7 @@ import '/models/my_user.dart';
 import '/models/offer.dart';
 import '/models/shipment.dart';
 import '/services/database_service.dart';
+import 'shipment_attachments.dart';
 
 class Body extends StatefulWidget {
   const Body({required this.myUser, required this.shipment});
@@ -23,15 +28,17 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-
   Future<void> _showEditShipmentPage(BuildContext context) async {
-    await Navigator.of(context, rootNavigator: true).pushNamed(
-      AppRoutes.editShipmentPage,
-      arguments: {
-        'myUser': widget.myUser,
-        'shipment': widget.shipment,
-      },
-    );
+    await EditShipmentPage.showPlz(
+        context: context, myUser: widget.myUser, shipment: widget.shipment);
+  }
+
+  Future<void> _showProfilePage(BuildContext context, String myUserId2) async {
+    await AccountPage.showPlz(context: context, myUser: widget.myUser, myUserId2: myUserId2);
+  }
+
+  Future<void> _showMessagesPage(BuildContext context, String myUserId2) async {
+    await MessagesPage.showPlz(context: context, myUser: widget.myUser, myUserId2: myUserId2);
   }
 
   Widget _circleAvatar({String? photoURL}) {
@@ -275,9 +282,7 @@ class _BodyState extends State<Body> {
                 const Text('Sđt người đưa hàng: '),
                 TextButton(
                   child: Text(widget.shipment.parcel!.phoneFrom ?? ''),
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                 ),
               ]),
               const SizedBox(height: 10),
@@ -293,10 +298,8 @@ class _BodyState extends State<Body> {
                 const SizedBox(width: 10),
                 const Text('Sđt người nhận hàng: '),
                 TextButton(
-                    child: Text(widget.shipment.parcel!.phoneTo ?? ''),
-                    onPressed: () {
-
-                    },
+                  child: Text(widget.shipment.parcel!.phoneTo ?? ''),
+                  onPressed: () {},
                 ),
               ]),
               const SizedBox(height: 10),
@@ -472,85 +475,221 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget _shippersEnrolledItem(String myUserId) {
-    return GestureDetector(
-      onTap: (){
-        //TODO: view profile
-        print('shipment body, tap _shippersEnrolledItem with myUserId: $myUserId');
-      },
-      child: Container(
-        padding: const EdgeInsets.all(5.0),
-        decoration: const BoxDecoration(
-          color: Colors.black12,
-          borderRadius: BorderRadius.all(Radius.circular(25)),
+  //TODO: _acceptOffer
+  Future<void> _acceptOffer(BuildContext context, String shipperId) async {
+    try {
+      //TODO: update shipment
+      widget.shipment.shipperId = shipperId;
+      widget.shipment.status = ShipmentStatus.SHIPPERDANGGIAO;
+      await DatabaseService()
+          .updateShipment(widget.shipment.id!, widget.shipment.toMap());
+
+      //TODO: everything ok
+      final snackBar = SnackBar(
+        content: const Text('Accepted offer successfully !'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            // Some code to undo the change.
+          },
         ),
-        child: Row(children: [
-          //TODO: avatar+name+phone
-          StreamBuilder(
-              stream: DatabaseService().getStreamMyUserByDocumentId(myUserId),
-              builder: (BuildContext context, AsyncSnapshot<MyUser?> snapshot) {
-                if (snapshot.hasError) {
-                  return Container(
-                      constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * .5));
-                }
-                if (snapshot.hasData) {
-                  return Container(
-                    constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * .5),
-                    child: Row(children: [
-                      //TODO: avatar
-                      _circleAvatar(photoURL: snapshot.data!.photoURL),
-                      //TODO: name+rating+phone
-                      Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } catch (e) {
+      unawaited(showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error occurred'),
+          content: Text(e.toString()),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ));
+    }
+  }
+
+  //TODO: are you sure/_confirm
+  Future<void> _confirmAcceptOffer(BuildContext context, Offer offer) async {
+    final bool didRequest = await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Chấp nhận offer?'),
+            content: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * .8),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Are you sure to acc this offer?'),
+                      const SizedBox(height: 10),
+                      Row(children: [
+                        const Icon(Icons.attach_money),
+                        Text('Price(vnđ): ${offer.price}'),
+                      ]),
+                      RichText(
+                        text: TextSpan(
                           children: [
-                            //TODO: name+rating
-                            Row(mainAxisSize: MainAxisSize.min,
-                                children:[
-                              Text(snapshot.data!.name ?? ''),
-                              const SizedBox(width: 10),
-                              _rating(context, myUserId),
-                            ]),
-                            //TODO: phone
-                            Text(snapshot.data!.phoneNumber ?? ''),
-                          ]),
+                            const WidgetSpan(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 2.0),
+                                child: Icon(Icons.description),
+                              ),
+                            ),
+                            TextSpan(
+                                text: 'Notes: ${offer.notes}',
+                                style: Theme.of(context).textTheme.bodyText1),
+                          ],
+                        ),
+                      ),
                     ]),
-                  );
-                }
-                return ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * .5),
-                  child: const Center(child: CircularProgressIndicator()),
-                );
-              }),
-          //TODO: price+notes
-          StreamBuilder(
-              stream: DatabaseService()
-                  .getStreamOfferByDocumentId(widget.shipment.id!, myUserId),
-              builder: (BuildContext context, AsyncSnapshot<Offer?> snapshot) {
-                if (snapshot.hasError) {
-                  return Container();
-                }
-                if (snapshot.hasData) {
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Offer: ${snapshot.data!.price} vnđ'),
-                        Text('Notes: ${snapshot.data!.notes}'),
-                      ]);
-                } else {
-                  return Container();
-                }
-              }),
-        ]),
+              ),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              ElevatedButton(
+                child: const Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+    if (didRequest == true) {
+      await _acceptOffer(context, offer.createdBy);
+    }
+  }
+
+  //TODO: _offerItemLongPress
+  Future<void> _offerItemLongPress(BuildContext context, String myUserId2) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context2) => AlertDialog(
+        title: const Text('Chọn thao tác'),
+        content: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * .8),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            _showProfilePage(context, myUserId2);
+                          },
+                          child: const Text('Xem profile')),
+                    ),
+                    const Spacer(),
+                  ]),
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            print('call');
+                            Navigator.of(context2).pop();
+                          },
+                          child: const Text('Gọi')),
+                    ),
+                    const Spacer(),
+                  ]),
+                  const SizedBox(height: 10),
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            print('sms');
+                            Navigator.of(context2).pop();
+                          },
+                          child: const Text('Nhắn tin SMS')),
+                    ),
+                    const Spacer(),
+                  ]),
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            _showMessagesPage(context, myUserId2);
+                          },
+                          child: const Text('Chat')),
+                    ),
+                    const Spacer(),
+                  ]),
+                ]),
+          ),
+        ),
       ),
     );
   }
 
+  Widget _offerItem(Offer offer) {
+    return StreamBuilder(
+      stream: DatabaseService().getStreamMyUserByDocumentId(offer.createdBy),
+      builder: (BuildContext context, AsyncSnapshot<MyUser?> snapshot) {
+        if (snapshot.hasError) {
+          return Container();
+        }
+        if (snapshot.hasData) {
+          MyUser myUser = snapshot.data!;
+          return ListTile(
+            onTap: () {
+              //TODO: confirm acc this offer?
+              _confirmAcceptOffer(context, offer);
+            },
+            onLongPress: () {
+              //TODO: show dialog/view info
+              _offerItemLongPress(context, offer.createdBy);
+            },
+            tileColor: Theme.of(context).backgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            leading: _circleAvatar(photoURL: myUser.photoURL),
+            title: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text(myUser.name ?? ''),
+              const SizedBox(width: 10),
+              _rating(context, offer.createdBy),
+            ]),
+            subtitle: Text(myUser.phoneNumber ?? ''),
+            trailing: SizedBox(
+              width: MediaQuery.of(context).size.width * .4,
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Offer: ${offer.price} vnđ'),
+                    Text(
+                      'Notes: ${offer.notes}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ]),
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
   Widget _shippersEnrolled() {
-    List<String> myUserIds = widget.shipment.shippersEnrolled;
-    if (myUserIds.isEmpty) {
+    if (widget.shipment.shippersEnrolled.isEmpty) {
       return Row(children: const [
         Icon(Icons.people_alt_outlined),
         SizedBox(width: 10),
@@ -563,14 +702,26 @@ class _BodyState extends State<Body> {
         SizedBox(width: 10),
         Text('Shipper đăng kí:'),
       ]),
-      Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: myUserIds.map((e) {
-            return Column(children: [
-              _shippersEnrolledItem(e),
-              const SizedBox(height: 10),
-            ]);
-          }).toList()),
+      StreamBuilder(
+        stream: DatabaseService().getStreamListOffer(widget.shipment.id!),
+        builder: (BuildContext context, AsyncSnapshot<List<Offer>> snapshot) {
+          if (snapshot.hasError) {
+            return Container();
+          }
+          if (snapshot.hasData) {
+            List<Offer> offers = snapshot.data!;
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: offers.map((e) {
+                  return Column(children: [
+                    _offerItem(e),
+                    const SizedBox(height: 5),
+                  ]);
+                }).toList());
+          }
+          return Container();
+        },
+      ),
     ]);
   }
 
@@ -633,14 +784,15 @@ class _BodyState extends State<Body> {
                 //TODO: service
                 _service(),
                 const SizedBox(height: 10),
+                //TODO: _status
+                _status(),
+                const SizedBox(height: 10),
                 //TODO: _shipperId
                 _shipperId(),
                 const SizedBox(height: 10),
                 //TODO: _shippersEnrolled
                 _shippersEnrolled(),
                 const SizedBox(height: 10),
-                //TODO: _status
-                _status(),
               ],
             ),
           ),
@@ -652,14 +804,16 @@ class _BodyState extends State<Body> {
           Row(children: const [Icon(Icons.chat), Text('Chat')]),
         ]),
       ]),
-      floatingActionButton: FloatingActionButton(child: const Icon(Icons.edit),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.edit),
         onPressed: () {
-          if(widget.shipment.status=='DANGTIMSHIPPER') {
+          if (widget.shipment.status == 'DANGTIMSHIPPER') {
             //TODO: go to edit
             _showEditShipmentPage(context);
-          }else{
+          } else {
             final snackBar = SnackBar(
-              content: const Text('Shipment đang trong giai đoạn thực hiện, không thể chỉnh sửa !'),
+              content: const Text(
+                  'Shipment đang trong giai đoạn thực hiện, không thể chỉnh sửa !'),
               action: SnackBarAction(
                 label: 'Ok',
                 onPressed: () {
@@ -673,5 +827,4 @@ class _BodyState extends State<Body> {
       ),
     );
   }
-
 }

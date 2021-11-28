@@ -19,11 +19,9 @@ class PostBox extends StatelessWidget {
   final Post post;
 
   Future<void> postEmote(String emoteCode) async {
-    //TODO: can dua vao DatabaseService luon
-    String documentPath = 'post/${post.id!}';
     //TODO: check exist
     Emote? emote =
-        await DatabaseService().getEmoteByCreatedBy(documentPath, myUser.id!);
+        await DatabaseService().getEmoteInPost(postId: post.id!, myUserId: myUser.id!);
     if (emote == null) {
       //TODO: new
       Emote x = Emote(
@@ -34,7 +32,7 @@ class PostBox extends StatelessWidget {
       DatabaseService().addEmoteToPost(postId: post.id!, myUserId: myUser.id!, emoteMap: x.toMap());
     } else {
       //TODO: delete
-      DatabaseService().deleteEmote(documentPath, emote.id!);
+      DatabaseService().deleteEmoteInPost(postId: post.id!, emoteId: emote.id!);
     }
   }
 

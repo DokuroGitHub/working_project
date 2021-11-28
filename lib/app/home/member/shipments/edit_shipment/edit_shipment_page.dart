@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '/routing/app_router.dart';
+
 import '/models/post.dart';
 import '/models/address.dart';
 import '/models/attachment.dart';
@@ -16,6 +18,16 @@ class EditShipmentPage extends StatefulWidget {
 
   final MyUser myUser;
   final Shipment? shipment;
+
+  static Future<void> showPlz({required BuildContext context, required MyUser myUser, Shipment? shipment}) async {
+    await Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.editShipmentPage,
+      arguments: {
+        'myUser': myUser,
+        'shipment': shipment,
+      },
+    );
+  }
 
   @override
   _EditShipmentPageState createState() => _EditShipmentPageState();

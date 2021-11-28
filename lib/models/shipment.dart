@@ -4,6 +4,11 @@ import 'parcel.dart';
 
 import 'address.dart';
 
+class ShipmentStatus{
+  static const DANGTIMSHIPPER = 'DANGTIMSHIPPER';
+  static const SHIPPERDANGGIAO = 'SHIPPERDANGGIAO';
+}
+
 class Shipment {
   String? id;
   Address? addressFrom;

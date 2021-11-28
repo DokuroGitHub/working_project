@@ -156,8 +156,8 @@ class TestPage extends StatelessWidget {
                         const SizedBox(width: 10),
                       ],
                     ),
-                    //TODO: page to test
-                    body: PostsPage(myUser: myUser),
+                    //TODO: page to test shipmentId1=2Ea3xqvgoVA7tPj1N6ls shipmentId2=W6QMVKwvFRviDIMqrosX
+                    body: ShipmentDetailsPage(myUser: myUser, shipmentId: '2Ea3xqvgoVA7tPj1N6ls',),
                   );
                 }
                 return Container();

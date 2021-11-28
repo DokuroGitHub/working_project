@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '/routing/app_router.dart';
+
 import '/models/my_user.dart';
 import '/models/shipment.dart';
 import '/services/database_service.dart';
@@ -11,6 +13,16 @@ class ShipmentDetailsPage extends StatefulWidget {
 
   final MyUser myUser;
   final String shipmentId;
+
+  static Future<void> showPlz({required BuildContext context, required MyUser myUser, required String shipmentId}) async {
+    await Navigator.of(context, rootNavigator: true).pushNamed(
+      AppRoutes.shipmentDetailsPage,
+      arguments: {
+        'myUser': myUser,
+        'shipmentId': shipmentId,
+      },
+    );
+  }
 
   @override
   State<ShipmentDetailsPage> createState() => _ShipmentDetailsPageState();
