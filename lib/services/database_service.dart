@@ -231,7 +231,6 @@ class DatabaseService {
     });
   }
 
-
   //TODO: deleteEmoteInPost
   Future<void> deleteEmoteInPost({required String postId, required String emoteId}) async {
     var ref = FirebaseFirestore.instance
@@ -239,6 +238,27 @@ class DatabaseService {
     ref.delete().whenComplete(() {
       print('deleted ${ref.path}');
     });
+  }
+
+  //TODO: getStreamEmoteInPost
+  Stream<Emote?> getStreamEmoteInPost({required String postId, required String myUserId}) {
+    return FirebaseFirestore.instance
+        .doc('post/$postId/emotes/$myUserId')
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return Emote.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+  //TODO: getStreamListEmoteInPost
+  Stream<List<Emote>> getStreamListEmoteInPost({required String postId}) {
+    return FirebaseFirestore.instance.collection('post/$postId/emotes').snapshots().map(
+            (snapshot) => snapshot.docs
+            .map((doc) => Emote.fromMap(doc.data(), doc.id))
+            .toList());
   }
 
   //TODO: ------------------- Emote in Comment -----------------------------

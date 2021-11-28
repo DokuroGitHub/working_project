@@ -17,12 +17,6 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
-  //Let's add the color code for our project
-  Color bgBlack = const Color(0xFF1a1a1a);
-  Color mainBlack = const Color(0xFF262626);
-  Color fbBlue = const Color(0xFF2D88FF);
-  Color mainGrey = const Color(0xFF505050);
-
   //Here I'm going to import a list of images that we will use for the profile picture and the storys
   List<String> avatarUrl = [
     "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80",
