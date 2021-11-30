@@ -6,6 +6,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:working_project/services/database_service.dart';
 import 'package:working_project/some_unused_page.dart';
+import 'app/home/feedbacks/feedbacks_page.dart';
 import 'app/home/member/posts/posts_page.dart';
 import 'app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
 import 'app/home/member/shipments/shipment_details/shipment_details_page.dart';

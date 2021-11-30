@@ -254,7 +254,7 @@ class DatabaseService {
   }
 
   //TODO: getStreamListEmoteInPost
-  Stream<List<Emote>> getStreamListEmoteInPost({required String postId}) {
+  Stream<List<Emote>> getStreamListEmoteInPost(String postId) {
     return FirebaseFirestore.instance.collection('post/$postId/emotes').snapshots().map(
             (snapshot) => snapshot.docs
             .map((doc) => Emote.fromMap(doc.data(), doc.id))
@@ -288,12 +288,33 @@ class DatabaseService {
   }
 
   //TODO: deleteEmoteInComment
-  Future<void> deleteEmoteInComment(String commentPath, String emoteId) async {
+  Future<void> deleteEmoteInComment({required String commentPath, required String emoteId}) async {
     var ref = FirebaseFirestore.instance
         .doc('$commentPath/emotes/$emoteId');
     ref.delete().whenComplete(() {
       print('deleted ${ref.path}');
     });
+  }
+
+  //TODO: getStreamEmoteInComment
+  Stream<Emote?> getStreamEmoteInComment({required String commentDocumentPath, required String myUserId}) {
+    return FirebaseFirestore.instance
+        .doc('$commentDocumentPath/emotes/$myUserId')
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return Emote.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+  //TODO: getStreamListEmoteInComment
+  Stream<List<Emote>> getStreamListEmoteInComment({required String commentDocumentPath}) {
+    return FirebaseFirestore.instance.collection('$commentDocumentPath/emotes').snapshots().map(
+            (snapshot) => snapshot.docs
+            .map((doc) => Emote.fromMap(doc.data(), doc.id))
+            .toList());
   }
 
   //TODO: ------------------- Emote in Message -----------------------------
@@ -324,16 +345,71 @@ class DatabaseService {
 
 
   //TODO: ------------------- Comment -----------------------------
-  //TODO: addComment
-  Future<void> addComment(
-      String documentPath, Map<String, dynamic> commentMap) async {
+  //TODO: addCommentToPost
+  Future<void> addCommentToPost(
+      String postId, Map<String, dynamic> commentMap) async {
     FirebaseFirestore.instance
-        .doc(documentPath)
-        .collection('comments')
+        .collection('post/$postId/comments')
         .add(commentMap)
         .then((ref) {
       print('added ${ref.path}');
     });
+  }
+
+  //TODO: addCommentToComment
+  Future<void> addCommentToComment({required String replyForCommentDocumentPath, required Map<String, dynamic> commentMap}) async {
+    FirebaseFirestore.instance
+        .collection('$replyForCommentDocumentPath/replies')
+        .add(commentMap)
+        .then((ref) {
+      print('added ${ref.path}');
+    });
+  }
+
+  //TODO: getStreamListCommentInPost
+  Stream<List<Comment>> getStreamListCommentInPost(String postId,
+      {CommentQuery? query, int limit = 5}) {
+    var ref =
+    FirebaseFirestore.instance.collection('post/$postId/comments');
+    Query<Map<String, dynamic>> newQuery;
+    switch (query) {
+      case CommentQuery.createdAtAsc:
+        newQuery = ref.orderBy('createdAt', descending: false).limitToLast(limit);
+        break;
+      case CommentQuery.createdAtDesc:
+        newQuery = ref.orderBy('createdAt', descending: true).limit(limit);
+        break;
+      default:
+        newQuery = ref.limit(limit);
+        break;
+    }
+    return newQuery.snapshots().map((snapshot) => snapshot.docs
+        .map((doc) => Comment.fromMap(doc.data(), doc.id, doc.reference.path))
+        .toList());
+  }
+
+  //TODO: getStreamListCommentInComment
+  Stream<List<Comment>> getStreamListCommentInComment(String replyForCommentDocumentPath, int limit,
+      {CommentQuery? query}) {
+    var ref =
+    FirebaseFirestore.instance.collection('$replyForCommentDocumentPath/replies');
+    Query<Map<String, dynamic>> newQuery;
+    switch (query) {
+      case CommentQuery.createdAtAsc:
+      //newQuery = ref.orderBy('createdAt', descending: false).limitToLast(limit);
+        newQuery = ref.orderBy('createdAt', descending: false);
+        break;
+      case CommentQuery.createdAtDesc:
+      //newQuery = ref.orderBy('createdAt', descending: true).limit(limit);
+        newQuery = ref.orderBy('createdAt', descending: true);
+        break;
+      default:
+        newQuery = ref;
+        break;
+    }
+    return newQuery.snapshots().map((snapshot) => snapshot.docs
+        .map((doc) => Comment.fromMap(doc.data(), doc.id, doc.reference.path))
+        .toList());
   }
 
   //TODO: ------------------- PostReported -----------------------------
@@ -775,18 +851,17 @@ class DatabaseService {
   Future<void> testAddComment() async {
     print('*****');
     String myUserId = 'peXkGVl6GvcllR7D9g5oPOm0zV62';
-    String documentPath =
-        'post/LMJdoO9wmfql27SYkeNZ/comments/HTdUtjPgxBwgeRAUxfzk';
+    String postId = 'LMJdoO9wmfql27SYkeNZ';
     //TODO: new
     var x = Comment(
-        attachments: [],
+        attachment: null,
         createdAt: DateTime.now(),
         createdBy: myUserId,
         deletedAt: null,
         editedAt: null,
         text: 'new comment desu yoooo');
 
-    addComment(documentPath, x.toMap());
+    addCommentToPost(postId, x.toMap());
   }
 
   //TODO: done

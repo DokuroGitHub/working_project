@@ -294,97 +294,89 @@ class _FeedBacksPageState extends State<FeedBacksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: Column(children: [
-        Expanded(
-            child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            reverse: false,
-            child: Column(
-              children: [
-                //TODO: feedbacks
-                StreamBuilder(
-                  stream:
-                      DatabaseService().getStreamListFeedback(widget.myUserId2, query: feedBacksQuery),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<FeedBack>> snapshot) {
-                    if (snapshot.hasError) {
-                      return Container();
-                    }
-                    if (snapshot.hasData) {
-                      List<FeedBack> feedBacks = snapshot.data!;
-                      return Column(children: [
-                        Column(children: [
-                          Row(children: const [
-                            Text('Xếp hạng & nhận xét'),
-                            Spacer(),
-                          ]),
-                          Summary(feedBacks: feedBacks),
-                          Row(children: [
-                            const Text('Chạm để xếp hạng'),
-                            IconButton(
-                                onPressed: () {
-                                  print('1 star');
-                                },
-                                icon: const Icon(Icons.star)),
-                            IconButton(
-                                onPressed: () {
-                                  print('2 star');
-                                },
-                                icon: const Icon(Icons.star)),
-                            IconButton(
-                                onPressed: () {
-                                  print('3 star');
-                                },
-                                icon: const Icon(Icons.star)),
-                            IconButton(
-                                onPressed: () {
-                                  print('4 star');
-                                },
-                                icon: const Icon(Icons.star)),
-                            IconButton(
-                                onPressed: () {
-                                  print('5 star');
-                                },
-                                icon: const Icon(Icons.star)),
-                          ]),
-                          GestureDetector(
-                            onTap: () {
-                              print('tap add nhận xét');
-                            },
-                            child: Row(children: const [
-                              Icon(Icons.note_add_outlined),
-                              Text('Viết nhận xét',
-                                  style: TextStyle(color: Colors.blue)),
-                            ]),
-                          ),
-                          Row(children: [
-                            const Spacer(),
-                            TextButton(
-                                onPressed: () {
-                                  _showFilters();
-                                },
-                                child: const Text('Sắp xếp theo')),
-                          ]),
-                        ]),
-                        Column(
-                            children: feedBacks.map((feedBack) {
-                              return Column(children:[
-                                _feedbackItem(feedBack),
-                                const SizedBox(height: 10),
-                              ]);
-                        }).toList()),
-                      ]);
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
-              ],
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          reverse: false,
+          child: StreamBuilder(
+            stream:
+            DatabaseService().getStreamListFeedback(widget.myUserId2, query: feedBacksQuery),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<FeedBack>> snapshot) {
+              if (snapshot.hasError) {
+                return Container();
+              }
+              if (snapshot.hasData) {
+                List<FeedBack> feedBacks = snapshot.data!;
+                return Column(children: [
+                  Column(children: [
+                    Row(children: const [
+                      Text('Xếp hạng & nhận xét'),
+                      Spacer(),
+                    ]),
+                    Summary(feedBacks: feedBacks),
+                    Row(children: [
+                      const Text('Chạm để xếp hạng'),
+                      IconButton(
+                          onPressed: () {
+                            print('1 star');
+                          },
+                          icon: const Icon(Icons.star)),
+                      IconButton(
+                          onPressed: () {
+                            print('2 star');
+                          },
+                          icon: const Icon(Icons.star)),
+                      IconButton(
+                          onPressed: () {
+                            print('3 star');
+                          },
+                          icon: const Icon(Icons.star)),
+                      IconButton(
+                          onPressed: () {
+                            print('4 star');
+                          },
+                          icon: const Icon(Icons.star)),
+                      IconButton(
+                          onPressed: () {
+                            print('5 star');
+                          },
+                          icon: const Icon(Icons.star)),
+                    ]),
+                    GestureDetector(
+                      onTap: () {
+                        print('tap add nhận xét');
+                      },
+                      child: Row(children: const [
+                        Icon(Icons.note_add_outlined),
+                        Text('Viết nhận xét',
+                            style: TextStyle(color: Colors.blue)),
+                      ]),
+                    ),
+                    Row(children: [
+                      const Spacer(),
+                      TextButton(
+                          onPressed: () {
+                            _showFilters();
+                          },
+                          child: const Text('Sắp xếp theo')),
+                    ]),
+                  ]),
+                  Column(
+                      children: feedBacks.map((feedBack) {
+                        return Column(children:[
+                          _feedbackItem(feedBack),
+                          const SizedBox(height: 10),
+                        ]);
+                      }).toList()),
+                ]);
+              } else {
+                return Container();
+              }
+            },
           ),
-        )),
-      ]),
+        ),
+      ),
     );
   }
 }
