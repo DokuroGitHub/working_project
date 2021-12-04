@@ -13,7 +13,6 @@ class Summary extends StatelessWidget {
     int _length = _listRating.length;
     for (var item in _listRating) {
       _sum += item;
-      _sum += item;
     }
     if (_length > 0) {
       _rating = _sum / _length;

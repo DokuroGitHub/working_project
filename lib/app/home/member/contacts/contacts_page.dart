@@ -12,10 +12,10 @@ import '/routing/app_router.dart';
 import '/services/database_service.dart';
 
 class ContactsPage extends StatefulWidget {
-  const ContactsPage({required this.myUser});
+  const ContactsPage({required this.myUser, this.controller});
 
   final MyUser myUser;
-
+  final ScrollController? controller;
   @override
   _ContactsPageState createState() => _ContactsPageState();
 }
@@ -61,10 +61,8 @@ class _ContactsPageState extends State<ContactsPage> {
                         style: const TextStyle(color: Colors.amber)),
                     const Icon(Icons.star, color: Colors.amber)
                   ])));
-        } else {
-          print('PostBox, _rating, snapshot feedback hasData false');
-          return Container();
         }
+        return Container();
       },
     );
   }
@@ -260,7 +258,9 @@ class _ContactsPageState extends State<ContactsPage> {
               List<MyUser> myUsers = snapshot.data!;
               print('myUsers has data');
               print(myUsers.length);
+              //TODO: doi sang singlechildscrollview
               return ListView.builder(
+                controller: widget.controller,
                 itemCount: myUsers.length,
                 itemBuilder: (BuildContext ctx, int index) {
                   if(myUsers[index].id! != widget.myUser.id!){

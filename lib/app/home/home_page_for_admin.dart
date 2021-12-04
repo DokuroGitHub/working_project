@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../locale_service.dart';
-import '../../theme_service.dart';
 import '/models/my_user.dart';
 import 'account/account_page.dart';
 import 'member/chats/chats_page.dart';
@@ -21,103 +20,58 @@ class HomePageForAdmin extends StatefulWidget {
 }
 
 class _HomePageForAdminState extends State<HomePageForAdmin> {
+  //TODO: nav screen
   int _selectedIndex = 0;
+  //TODO: hide nav
+  late final ScrollListener _model;
+  late final ScrollController _controller;
+  final double _bottomNavBarHeight = 60;
 
   @override
-  Widget build(BuildContext context) {
-    List<Widget> _widgetOptions = [
-      //TODO: page 0
-      PostsPage(myUser: widget.myUser),
-      //TODO: page 1
-      ShipmentsPage(myUser: widget.myUser),
-      //TODO: page 2
-      ContactsPage(myUser: widget.myUser),
-      //TODO: page 3
-      ChatsPage(myUser: widget.myUser),
-      //TODO: page 4
-      AccountPage(myUser: widget.myUser, myUserId2: widget.myUser.id!),
-    ];
+  void initState() {
+    super.initState();
+    _controller = ScrollController();
+    _model = ScrollListener.initialise(_controller);
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home page for member'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.lightbulb),
-            onPressed: ThemeService().switchTheme,
-          ),
-          PopupMenuButton<String>(
-            onSelected: LocaleService().changeLocale,
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem<String>(
-                  value: 'vi',
-                  child: Text('Tiếng Việt',
-                      style: TextStyle(
-                          color: LocaleService().languageCode == 'vi'
-                              ? Colors.red
-                              : Colors.blue)),
-                ),
-                PopupMenuItem<String>(
-                  value: 'en',
-                  child: Text('English',
-                      style: TextStyle(
-                          color: LocaleService().languageCode == 'en'
-                              ? Colors.red
-                              : Colors.blue)),
-                ),
-                PopupMenuItem<String>(
-                  value: 'es',
-                  child: Text('Espanol',
-                      style: TextStyle(
-                          color: LocaleService().languageCode == 'es'
-                              ? Colors.red
-                              : Colors.blue)),
-                ),
-              ];
-            },
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: Center(
-        child: _widgetOptions[_selectedIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+  Widget get _bottomNavBar {
+    return SizedBox(
+      height: _bottomNavBarHeight,
+      child: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.post_add),
+              icon: const Icon(Icons.post_add),
               tooltip: 'Posts here',
-              label: 'Posts',
+              label: AppLocalizations.of(context)!.posts,
               backgroundColor: Colors.green),
           BottomNavigationBarItem(
-              icon: Icon(Icons.delivery_dining),
+              icon: const Icon(Icons.delivery_dining),
               tooltip: 'Shipments here',
-              label: 'Shipments',
+              label: AppLocalizations.of(context)!.shipments,
               backgroundColor: Colors.yellow),
           BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
+            icon: const Icon(Icons.contacts),
             tooltip: 'Contacts here',
-            label: 'Contacts',
+            label: AppLocalizations.of(context)!.contacts,
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
+            icon: const Icon(Icons.chat),
             tooltip: 'Chats here',
-            label: 'Chats',
+            label: AppLocalizations.of(context)!.chats,
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: const Icon(Icons.person),
             tooltip: 'Profile here',
-            label: 'Profile',
+            label: AppLocalizations.of(context)!.account,
             backgroundColor: Colors.blue,
           ),
         ],
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
-        backgroundColor: Colors.blue,
+        //backgroundColor: Colors.blue,
         iconSize: 30,
         onTap: (index){
           setState(() {
@@ -127,5 +81,58 @@ class _HomePageForAdminState extends State<HomePageForAdmin> {
         elevation: 5,
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final List<Widget> _widgetOptions = [
+      //TODO: page 0
+      PostsPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 1
+      ShipmentsPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 2
+      ContactsPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 3
+      ChatsPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 4
+      AccountPage(myUser: widget.myUser, myUserId2: widget.myUser.id!, controller: _controller,),
+    ];
+
+    return Scaffold(
+      body: AnimatedBuilder(
+        animation: _model,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              _widgetOptions[_selectedIndex],
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: _model.bottom,
+                child: _bottomNavBar,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+//TODO: hide nav bar
+class ScrollListener extends ChangeNotifier {
+  double bottom = 0;
+  double _last = 0;
+
+  ScrollListener.initialise(ScrollController controller, [double height = 56]) {
+    controller.addListener(() {
+      final current = controller.offset;
+      bottom += _last - current;
+      if (bottom <= -height) bottom = -height;
+      if (bottom >= 0) bottom = 0;
+      _last = current;
+      if (bottom <= 0 && bottom >= -height) notifyListeners();
+    });
   }
 }

@@ -15,13 +15,14 @@ import 'package:working_project/services/auth_service.dart';
 import 'package:working_project/services/database_service.dart';
 
 class Body extends StatefulWidget {
-  const Body({required this.myUser, required this.myUser2});
+  const Body({required this.myUser, required this.myUser2, this.controller});
 
   final MyUser myUser;
   final MyUser myUser2;
+  final ScrollController? controller;
 
   @override
-  State<Body> createState() => _BodyState();
+  _BodyState createState() => _BodyState();
 }
 
 class _BodyState extends State<Body> {
@@ -48,22 +49,22 @@ class _BodyState extends State<Body> {
 
   Future<void> _confirmSignOut(BuildContext context) async {
     final bool didRequestSignOut = await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(AppLocalizations.of(context)!.logout),
-            content: Text(AppLocalizations.of(context)!.logoutAreYouSure),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text(AppLocalizations.of(context)!.cancel),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              ElevatedButton(
-                child: Text(AppLocalizations.of(context)!.ok),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.logout),
+        content: Text(AppLocalizations.of(context)!.logoutAreYouSure),
+        actions: <Widget>[
+          ElevatedButton(
+            child: Text(AppLocalizations.of(context)!.cancel),
+            onPressed: () => Navigator.of(context).pop(false),
           ),
-        ) ??
+          ElevatedButton(
+            child: Text(AppLocalizations.of(context)!.ok),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    ) ??
         false;
     if (didRequestSignOut == true) {
       await _signOut(context);
@@ -223,7 +224,7 @@ class _BodyState extends State<Body> {
       const Text('Số điện thoại: '),
       Container(
         child:
-            Text(widget.myUser2.phoneNumber ?? 'Người dùng chưa thiết lập sđt'),
+        Text(widget.myUser2.phoneNumber ?? 'Người dùng chưa thiết lập sđt'),
         padding: const EdgeInsets.all(5.0),
         decoration: const BoxDecoration(
           color: Colors.blue,
@@ -259,7 +260,7 @@ class _BodyState extends State<Body> {
         child: Text(widget.myUser2.selfIntroduction ?? ''),
         padding: const EdgeInsets.all(15.0),
         constraints:
-            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .6),
+        BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .6),
         decoration: const BoxDecoration(
           color: Colors.amberAccent,
           borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -294,7 +295,7 @@ class _BodyState extends State<Body> {
           Container(
             padding: const EdgeInsets.fromLTRB(15.0, 0, 15.0, 0),
             child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 const Icon(Icons.handyman_outlined),
                 const SizedBox(width: 10),
@@ -528,53 +529,54 @@ class _BodyState extends State<Body> {
         //TODO: fields
         Expanded(
             child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            reverse: false,
-            child: Column(
-              children: [
-                //TODO: address
-                _address(),
-                const SizedBox(height: 10),
-                //TODO: _birthDate
-                _birthDate(),
-                const SizedBox(height: 10),
-                //TODO: _createdAt
-                _createdAt(),
-                const SizedBox(height: 10),
-                //TODO: _email
-                _email(),
-                const SizedBox(height: 10),
-                //TODO: _isActive
-                _isActive(),
-                const SizedBox(height: 10),
-                //TODO: _isBlock
-                _isBlock(),
-                const SizedBox(height: 10),
-                //TODO: _lastSignInAt
-                _lastSignInAt(),
-                const SizedBox(height: 10),
-                //TODO: _name
-                _name(),
-                const SizedBox(height: 10),
-                //TODO: _phoneNumber
-                _phoneNumber(),
-                const SizedBox(height: 10),
-                //TODO: _role
-                _role(),
-                const SizedBox(height: 10),
-                //TODO: _selfIntroduction
-                _selfIntroduction(),
-                const SizedBox(height: 10),
-                //TODO: _shipperInfo
-                _shipperInfo(),
-                const SizedBox(height: 10),
-                //TODO: _feedback
-                _feedback(),
-              ],
-            ),
-          ),
-        )),
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                controller: widget.controller,
+                reverse: false,
+                child: Column(
+                  children: [
+                    //TODO: address
+                    _address(),
+                    const SizedBox(height: 10),
+                    //TODO: _birthDate
+                    _birthDate(),
+                    const SizedBox(height: 10),
+                    //TODO: _createdAt
+                    _createdAt(),
+                    const SizedBox(height: 10),
+                    //TODO: _email
+                    _email(),
+                    const SizedBox(height: 10),
+                    //TODO: _isActive
+                    _isActive(),
+                    const SizedBox(height: 10),
+                    //TODO: _isBlock
+                    _isBlock(),
+                    const SizedBox(height: 10),
+                    //TODO: _lastSignInAt
+                    _lastSignInAt(),
+                    const SizedBox(height: 10),
+                    //TODO: _name
+                    _name(),
+                    const SizedBox(height: 10),
+                    //TODO: _phoneNumber
+                    _phoneNumber(),
+                    const SizedBox(height: 10),
+                    //TODO: _role
+                    _role(),
+                    const SizedBox(height: 10),
+                    //TODO: _selfIntroduction
+                    _selfIntroduction(),
+                    const SizedBox(height: 10),
+                    //TODO: _shipperInfo
+                    _shipperInfo(),
+                    const SizedBox(height: 10),
+                    //TODO: _feedback
+                    _feedback(),
+                  ],
+                ),
+              ),
+            )),
         //TODO: call, sms, chat
         if (widget.myUser2.id! != widget.myUser.id!)
           Row(children: [

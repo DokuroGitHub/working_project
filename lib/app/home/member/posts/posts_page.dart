@@ -8,9 +8,10 @@ import '/models/post.dart';
 import '/services/database_service.dart';
 
 class PostsPage extends StatefulWidget {
-  const PostsPage({required this.myUser});
+  const PostsPage({required this.myUser, this.controller});
 
   final MyUser myUser;
+  final ScrollController? controller;
 
   @override
   _PostsPageState createState() => _PostsPageState();
@@ -56,6 +57,7 @@ class _PostsPageState extends State<PostsPage> {
 
       //Now let's work on the body
       body: SingleChildScrollView(
+        controller: widget.controller,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 28),
           child: Column(

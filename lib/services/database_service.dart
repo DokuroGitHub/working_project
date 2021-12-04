@@ -416,7 +416,7 @@ class DatabaseService {
         .toList());
   }
 
-  //TODO: getStreamListCommentInComment
+  //TODO: getStreamListCommentInComment // lấy limit số replies mới nhất
   Stream<List<Comment>> getStreamListCommentInComment(
       String replyForCommentDocumentPath,
       {int limit = 0}) {
@@ -425,7 +425,7 @@ class DatabaseService {
         .orderBy('createdAt', descending: false);
     Query<Map<String, dynamic>> newQuery;
     if(limit!=0){
-      newQuery = ref.limit(limit);
+      newQuery = ref.limitToLast(limit);
     }else{
       newQuery = ref;
     }

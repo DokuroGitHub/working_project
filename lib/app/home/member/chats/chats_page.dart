@@ -9,10 +9,10 @@ import '/routing/app_router.dart';
 import '/services/database_service.dart';
 
 class ChatsPage extends StatefulWidget {
-  const ChatsPage({required this.myUser});
+  const ChatsPage({required this.myUser, this.controller});
 
   final MyUser myUser;
-
+  final ScrollController? controller;
   @override
   _ChatsPageState createState() => _ChatsPageState();
 }
@@ -393,6 +393,7 @@ class _ChatsPageState extends State<ChatsPage> {
               List<Conversation> conversations = snapshot.data!;
               print('chats_page, conversations: ${conversations.length}');
               return ListView.builder(
+                controller: widget.controller,
                 itemCount: conversations.length,
                 itemBuilder: (BuildContext context, int index) {
                   return _item(context, conversations[index]);

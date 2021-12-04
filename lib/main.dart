@@ -37,7 +37,7 @@ Future<void> main() async {
         SharedPreferencesService(await SharedPreferences.getInstance()),
       ),
     ],
-    child: MyAppForTestPages(),
+    child: MyApp(),
   ));
 }
 

@@ -8,9 +8,10 @@ import '/models/shipment.dart';
 import '/services/database_service.dart';
 
 class ShipmentsPage extends StatefulWidget {
-  const ShipmentsPage({required this.myUser});
+  const ShipmentsPage({required this.myUser, this.controller});
 
   final MyUser myUser;
+  final ScrollController? controller;
 
   @override
   _ShipmentsPageState createState() => _ShipmentsPageState();
@@ -106,6 +107,7 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
             if (snapshot.hasData) {
               List<Shipment> shipments = snapshot.data!;
               return ListView.builder(
+                controller: widget.controller,
                 itemCount: shipments.length,
                 itemBuilder: (BuildContext ctx, int index) {
                   //if(shipments[index].createdBy == widget.myUser.id!)

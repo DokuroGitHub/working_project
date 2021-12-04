@@ -532,14 +532,14 @@ class _CommentItemState extends State<CommentItem> {
           num length = snapshot.data!.length;
           num gap = length - _limit;
           if (gap > 0) {
-            //TODO: Xem thêm 3 bình luận
-            TextButton(
+            //TODO: Xem thêm 3 phản hồi
+            return TextButton(
                 onPressed: () {
                   setState(() {
                     _limit += _defaultLimitIncrease;
                   });
                 },
-                child: Text('Xem thêm $gap bình luận'));
+                child: Text('Xem thêm $gap phản hồi'));
           }
         }
         return Container();
@@ -716,10 +716,10 @@ class _CommentItemState extends State<CommentItem> {
             //TODO: _showReplies + input row
             if (_showReplies)
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                //TODO: list phản hồi
-                _listRepliesWithFilter(),
                 //TODO: Xem thêm 3 phản hồi
                 _viewMoreRepliesWidget(),
+                //TODO: list phản hồi
+                _listRepliesWithFilter(),
                 //TODO: input row
                 _inputRow(),
               ]),

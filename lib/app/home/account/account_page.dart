@@ -6,10 +6,11 @@ import '/services/database_service.dart';
 import 'components/body.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({required this.myUser, required this.myUserId2});
+  const AccountPage({required this.myUser, required this.myUserId2, this.controller});
 
   final MyUser myUser;
   final String myUserId2;
+  final ScrollController? controller;
 
   static Future<void> showPlz({required BuildContext context, required MyUser myUser, required String myUserId2}) async {
     await Navigator.of(context, rootNavigator: true).pushNamed(
@@ -22,7 +23,7 @@ class AccountPage extends StatefulWidget {
   }
 
   @override
-  State<AccountPage> createState() => _AccountPageState();
+  _AccountPageState createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
@@ -32,7 +33,7 @@ class _AccountPageState extends State<AccountPage> {
     return StreamBuilder<MyUser?>(
         stream: DatabaseService().getStreamMyUserByDocumentId(widget.myUserId2),
         builder: (context, user) => user.data != null
-            ? Body(myUser: widget.myUser, myUser2: user.data!)
+            ? Body(myUser: widget.myUser, myUser2: user.data!, controller: widget.controller)
             : Container());
   }
 }
