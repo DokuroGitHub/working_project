@@ -14,6 +14,9 @@ import 'package:working_project/models/my_user.dart';
 import 'package:working_project/services/auth_service.dart';
 import 'package:working_project/services/database_service.dart';
 
+import '../../../../locale_service.dart';
+import '../../../../theme_service.dart';
+
 class Body extends StatefulWidget {
   const Body({required this.myUser, required this.myUser2, this.controller});
 
@@ -100,10 +103,52 @@ class _BodyState extends State<Body> {
       title: const Text(Strings.accountPage),
       actions: <Widget>[
         if (widget.myUser2.id! == widget.myUser.id!)
-          TextButton(
-            child: Text(AppLocalizations.of(context)!.logout,style: Theme.of(context).textTheme.bodyText1),
-            onPressed: () => _confirmSignOut(context),
-          ),
+          Row(children: [
+            IconButton(
+              icon: const Icon(Icons.lightbulb),
+              color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+              onPressed: ThemeService().switchTheme,
+            ),
+            PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert,
+                color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+              ),
+              onSelected: LocaleService().changeLocale,
+              itemBuilder: (BuildContext context) {
+                return [
+                  PopupMenuItem<String>(
+                    value: 'vi',
+                    child: Text('Tiếng Việt',
+                        style: TextStyle(
+                            color: LocaleService().languageCode == 'vi'
+                                ? Colors.red
+                                : Colors.blue)),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'en',
+                    child: Text('English',
+                        style: TextStyle(
+                            color: LocaleService().languageCode == 'en'
+                                ? Colors.red
+                                : Colors.blue)),
+                  ),
+                  PopupMenuItem<String>(
+                    value: 'es',
+                    child: Text('Espanol',
+                        style: TextStyle(
+                            color: LocaleService().languageCode == 'es'
+                                ? Colors.red
+                                : Colors.blue)),
+                  ),
+                ];
+              },
+            ),
+            const SizedBox(width: 10),
+            TextButton(
+              child: Text(AppLocalizations.of(context)!.logout,style: Theme.of(context).textTheme.bodyText1),
+              onPressed: () => _confirmSignOut(context),
+            ),
+          ]),
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(100.0),
