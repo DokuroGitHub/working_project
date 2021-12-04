@@ -172,10 +172,11 @@ class DatabaseService {
   //TODO: ------------------- Post -----------------------------
   //TODO: addPost
   Future<String?> addPost(Map<String, dynamic> postMap) async {
-    return FirebaseFirestore.instance.collection('post').add(postMap).then((ref) {
+    return FirebaseFirestore.instance.collection('post').add(postMap).then(
+        (ref) {
       print('added ${ref.path}');
       return ref.id;
-    },onError: (dynamic error){
+    }, onError: (dynamic error) {
       print('added post failed, error: $error');
       return null;
     });
@@ -208,8 +209,10 @@ class DatabaseService {
   //TODO: ------------------- Emote -----------------------------
   //TODO: ------------------- Emote in Post -----------------------------
   //TODO: addEmoteToPost, new/ko merge   --- nen xai--
-  Future<void> addEmoteToPost({required String postId, required String myUserId,
-    required Map<String, dynamic> emoteMap}) async {
+  Future<void> addEmoteToPost(
+      {required String postId,
+      required String myUserId,
+      required Map<String, dynamic> emoteMap}) async {
     var ref = FirebaseFirestore.instance
         .collection('post/$postId/emotes')
         .doc(myUserId);
@@ -219,7 +222,8 @@ class DatabaseService {
   }
 
   //TODO: getEmoteInPost
-  Future<Emote?> getEmoteInPost({required String postId, required String myUserId}) {
+  Future<Emote?> getEmoteInPost(
+      {required String postId, required String myUserId}) {
     return FirebaseFirestore.instance
         .doc('post/$postId/emotes/$myUserId')
         .get()
@@ -232,16 +236,17 @@ class DatabaseService {
   }
 
   //TODO: deleteEmoteInPost
-  Future<void> deleteEmoteInPost({required String postId, required String emoteId}) async {
-    var ref = FirebaseFirestore.instance
-        .doc('post/$postId/emotes/$emoteId');
+  Future<void> deleteEmoteInPost(
+      {required String postId, required String emoteId}) async {
+    var ref = FirebaseFirestore.instance.doc('post/$postId/emotes/$emoteId');
     ref.delete().whenComplete(() {
       print('deleted ${ref.path}');
     });
   }
 
   //TODO: getStreamEmoteInPost
-  Stream<Emote?> getStreamEmoteInPost({required String postId, required String myUserId}) {
+  Stream<Emote?> getStreamEmoteInPost(
+      {required String postId, required String myUserId}) {
     return FirebaseFirestore.instance
         .doc('post/$postId/emotes/$myUserId')
         .snapshots()
@@ -255,16 +260,20 @@ class DatabaseService {
 
   //TODO: getStreamListEmoteInPost
   Stream<List<Emote>> getStreamListEmoteInPost(String postId) {
-    return FirebaseFirestore.instance.collection('post/$postId/emotes').snapshots().map(
-            (snapshot) => snapshot.docs
+    return FirebaseFirestore.instance
+        .collection('post/$postId/emotes')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
             .map((doc) => Emote.fromMap(doc.data(), doc.id))
             .toList());
   }
 
   //TODO: ------------------- Emote in Comment -----------------------------
   //TODO: addEmoteToComment, new/ko merge   --- nen xai--
-  Future<void> addEmoteToComment({required String myUserId, required String commentPath,
-    required Map<String, dynamic> emoteMap}) async {
+  Future<void> addEmoteToComment(
+      {required String myUserId,
+      required String commentPath,
+      required Map<String, dynamic> emoteMap}) async {
     var ref = FirebaseFirestore.instance
         .doc(commentPath)
         .collection('emotes')
@@ -275,7 +284,8 @@ class DatabaseService {
   }
 
   //TODO: getEmoteInComment
-  Future<Emote?> getEmoteInComment({required String commentPath, required String myUserId}) {
+  Future<Emote?> getEmoteInComment(
+      {required String commentPath, required String myUserId}) {
     return FirebaseFirestore.instance
         .doc('$commentPath/emotes/$myUserId')
         .get()
@@ -288,16 +298,17 @@ class DatabaseService {
   }
 
   //TODO: deleteEmoteInComment
-  Future<void> deleteEmoteInComment({required String commentPath, required String emoteId}) async {
-    var ref = FirebaseFirestore.instance
-        .doc('$commentPath/emotes/$emoteId');
+  Future<void> deleteEmoteInComment(
+      {required String commentPath, required String emoteId}) async {
+    var ref = FirebaseFirestore.instance.doc('$commentPath/emotes/$emoteId');
     ref.delete().whenComplete(() {
       print('deleted ${ref.path}');
     });
   }
 
   //TODO: getStreamEmoteInComment
-  Stream<Emote?> getStreamEmoteInComment({required String commentDocumentPath, required String myUserId}) {
+  Stream<Emote?> getStreamEmoteInComment(
+      {required String commentDocumentPath, required String myUserId}) {
     return FirebaseFirestore.instance
         .doc('$commentDocumentPath/emotes/$myUserId')
         .snapshots()
@@ -310,17 +321,22 @@ class DatabaseService {
   }
 
   //TODO: getStreamListEmoteInComment
-  Stream<List<Emote>> getStreamListEmoteInComment({required String commentDocumentPath}) {
-    return FirebaseFirestore.instance.collection('$commentDocumentPath/emotes').snapshots().map(
-            (snapshot) => snapshot.docs
+  Stream<List<Emote>> getStreamListEmoteInComment(
+      {required String commentDocumentPath}) {
+    return FirebaseFirestore.instance
+        .collection('$commentDocumentPath/emotes')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
             .map((doc) => Emote.fromMap(doc.data(), doc.id))
             .toList());
   }
 
   //TODO: ------------------- Emote in Message -----------------------------
   //TODO: addEmoteWithId, new/ko merge   --- nen xai--
-  Future<void> addEmoteToMessage({required String messageId, required String myUserId,
-    required Map<String, dynamic> emoteMap}) async {
+  Future<void> addEmoteToMessage(
+      {required String messageId,
+      required String myUserId,
+      required Map<String, dynamic> emoteMap}) async {
     var ref = FirebaseFirestore.instance
         .doc(messageId)
         .collection('emotes')
@@ -329,7 +345,6 @@ class DatabaseService {
       print('added ${ref.path}');
     });
   }
-
 
   //TODO: updateEmote, merge
   Future<void> updateEmote(String myUserId, String documentPath,
@@ -342,7 +357,6 @@ class DatabaseService {
       print('updated ${ref.path}');
     });
   }
-
 
   //TODO: ------------------- Comment -----------------------------
   //TODO: addCommentToPost
@@ -357,7 +371,9 @@ class DatabaseService {
   }
 
   //TODO: addCommentToComment
-  Future<void> addCommentToComment({required String replyForCommentDocumentPath, required Map<String, dynamic> commentMap}) async {
+  Future<void> addCommentToComment(
+      {required String replyForCommentDocumentPath,
+      required Map<String, dynamic> commentMap}) async {
     FirebaseFirestore.instance
         .collection('$replyForCommentDocumentPath/replies')
         .add(commentMap)
@@ -368,19 +384,23 @@ class DatabaseService {
 
   //TODO: getStreamListCommentInPost
   Stream<List<Comment>> getStreamListCommentInPost(String postId,
-      {CommentQuery? query, int limit = 5}) {
-    var ref =
-    FirebaseFirestore.instance.collection('post/$postId/comments');
+      {CommentQuery? query, int limit=0}) {
+    var ref = FirebaseFirestore.instance.collection('post/$postId/comments');
     Query<Map<String, dynamic>> newQuery;
     switch (query) {
       case CommentQuery.createdAtAsc:
-        newQuery = ref.orderBy('createdAt', descending: false).limitToLast(limit);
+        newQuery =
+            ref.orderBy('createdAt', descending: false).limitToLast(limit);
         break;
       case CommentQuery.createdAtDesc:
         newQuery = ref.orderBy('createdAt', descending: true).limit(limit);
         break;
       default:
-        newQuery = ref.limit(limit);
+        if(limit!=0){
+          newQuery = ref.limit(limit);
+        }else{
+          newQuery = ref;
+        }
         break;
     }
     return newQuery.snapshots().map((snapshot) => snapshot.docs
@@ -389,23 +409,17 @@ class DatabaseService {
   }
 
   //TODO: getStreamListCommentInComment
-  Stream<List<Comment>> getStreamListCommentInComment(String replyForCommentDocumentPath, int limit,
-      {CommentQuery? query}) {
-    var ref =
-    FirebaseFirestore.instance.collection('$replyForCommentDocumentPath/replies');
+  Stream<List<Comment>> getStreamListCommentInComment(
+      String replyForCommentDocumentPath,
+      {int limit = 0}) {
+    var ref = FirebaseFirestore.instance
+        .collection('$replyForCommentDocumentPath/replies')
+        .orderBy('createdAt', descending: false);
     Query<Map<String, dynamic>> newQuery;
-    switch (query) {
-      case CommentQuery.createdAtAsc:
-      //newQuery = ref.orderBy('createdAt', descending: false).limitToLast(limit);
-        newQuery = ref.orderBy('createdAt', descending: false);
-        break;
-      case CommentQuery.createdAtDesc:
-      //newQuery = ref.orderBy('createdAt', descending: true).limit(limit);
-        newQuery = ref.orderBy('createdAt', descending: true);
-        break;
-      default:
-        newQuery = ref;
-        break;
+    if(limit!=0){
+      newQuery = ref.limit(limit);
+    }else{
+      newQuery = ref;
     }
     return newQuery.snapshots().map((snapshot) => snapshot.docs
         .map((doc) => Comment.fromMap(doc.data(), doc.id, doc.reference.path))
@@ -426,8 +440,10 @@ class DatabaseService {
   //TODO: ------------------- Shipment -----------------------------
   //TODO: addShipment
   Future<String?> addShipment(Map<String, dynamic> shipmentMap) async {
-    return FirebaseFirestore.instance.collection('shipment').add(shipmentMap).then(
-        (ref) {
+    return FirebaseFirestore.instance
+        .collection('shipment')
+        .add(shipmentMap)
+        .then((ref) {
       print('added ${ref.path}');
       return ref.id;
     }, onError: (dynamic error) {
@@ -469,9 +485,12 @@ class DatabaseService {
 
   //TODO: ------------------- Offer -----------------------------
   //TODO: addOfferToShipmentWithId, set ko merge   --- nen xai--
-  Future<void> addOfferToShipmentWithId({required String shipmentId,
-    required String myUserId, required Map<String, dynamic> offerMap}) async {
-    var ref = FirebaseFirestore.instance.doc('shipment/$shipmentId/offers/$myUserId');
+  Future<void> addOfferToShipmentWithId(
+      {required String shipmentId,
+      required String myUserId,
+      required Map<String, dynamic> offerMap}) async {
+    var ref =
+        FirebaseFirestore.instance.doc('shipment/$shipmentId/offers/$myUserId');
     ref.set(offerMap).whenComplete(() {
       print('added ${ref.path}');
     });
@@ -495,14 +514,16 @@ class DatabaseService {
   //TODO: getStreamListOffer
   Stream<List<Offer>> getStreamListOffer(String shipmentId) {
     return FirebaseFirestore.instance
-        .collection('shipment/$shipmentId/offers').snapshots().map(
-            (snapshot) => snapshot.docs
+        .collection('shipment/$shipmentId/offers')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
             .map((doc) => Offer.fromMap(doc.data(), doc.id))
             .toList());
   }
 
   //TODO: getOffer
-  Future<Offer?> getOffer({required String shipmentId, required String myUserId}) {
+  Future<Offer?> getOffer(
+      {required String shipmentId, required String myUserId}) {
     return FirebaseFirestore.instance
         .doc('shipment/$shipmentId/offers/$myUserId')
         .get()
@@ -515,9 +536,10 @@ class DatabaseService {
   }
 
   //TODO: deleteOffer
-  Future<void> deleteOffer({required String shipmentId, required String myUserId}) async {
-    var ref = FirebaseFirestore.instance
-        .doc('shipment/$shipmentId/offers/$myUserId');
+  Future<void> deleteOffer(
+      {required String shipmentId, required String myUserId}) async {
+    var ref =
+        FirebaseFirestore.instance.doc('shipment/$shipmentId/offers/$myUserId');
     ref.delete().whenComplete(() {
       print('deleted ${ref.path}');
     });
@@ -832,7 +854,7 @@ class DatabaseService {
     //TODO: new
     var x = Emote(createdBy: myUserId, emoteCode: 'HEART');
 
-    addEmoteToPost(postId: postId, myUserId:myUserId, emoteMap: x.toMap());
+    addEmoteToPost(postId: postId, myUserId: myUserId, emoteMap: x.toMap());
   }
 
   //TODO: done
@@ -844,7 +866,8 @@ class DatabaseService {
     //TODO: new
     var x = Emote(createdBy: myUserId, emoteCode: 'HEART');
 
-    addEmoteToComment(commentPath: commentPath, myUserId: myUserId, emoteMap: x.toMap());
+    addEmoteToComment(
+        commentPath: commentPath, myUserId: myUserId, emoteMap: x.toMap());
   }
 
   //TODO: done

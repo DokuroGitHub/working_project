@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'rating_widget.dart';
 import 'post_attachments.dart';
 import 'post_shipment.dart';
 import '/common_widgets/helper.dart';
 import '/models/attachment.dart';
 import '/models/comment.dart';
 import '/models/emote.dart';
-import '/models/feedback.dart';
 import '/models/my_user.dart';
 import '/models/post.dart';
 import '/models/shipment.dart';
@@ -103,42 +103,6 @@ class _PostBoxState extends State<PostBox> {
     } catch (e) {
       print('posts_page, post_box, addEmote error: $e');
     }
-  }
-
-  Widget _rating(BuildContext context) {
-    return StreamBuilder(
-      stream: DatabaseService().getStreamListFeedback(widget.post.createdBy),
-      builder: (BuildContext context, AsyncSnapshot<List<FeedBack>> snapshot) {
-        if (snapshot.hasError) {
-          print('PostBox, _rating, feedback hasError: ${snapshot.error}');
-          return Container();
-        }
-        if (snapshot.hasData) {
-          List<num> _listRating = snapshot.data!.map((e) => e.rating).toList();
-          double _rating = 0;
-          double _sum = 0;
-          int _length = _listRating.length;
-          for (var item in _listRating) {
-            _sum += item;
-          }
-          if (_length > 0) {
-            _rating = _sum / _length;
-          }
-          return InkWell(
-              onTap: () {
-                print('tap rating, len:$_length sum:$_sum rating:$_rating');
-              },
-              child: Tooltip(
-                  message: '$_length lượt đánh giá',
-                  child: Row(children: [
-                    Text(_rating.toString(),
-                        style: const TextStyle(color: Colors.amber)),
-                    const Icon(Icons.star, color: Colors.amber)
-                  ])));
-        }
-        return Container();
-      },
-    );
   }
 
   Widget _content() {
@@ -359,7 +323,7 @@ class _PostBoxState extends State<PostBox> {
             return CommentItem(
               myUser: widget.myUser,
               comment: comment,
-              replyAble: true,
+              onReplyTap: null,
             );
           }).toList());
         }
@@ -424,7 +388,7 @@ class _PostBoxState extends State<PostBox> {
           const SizedBox(width: 10.0),
           Expanded(
             child: RawKeyboardListener(
-              focusNode: _commentNode,
+              focusNode: FocusNode(),
               onKey: (event) async {
                 if (event.runtimeType == RawKeyDownEvent &&
                     (event.logicalKey.keyId == 4294967309) &&
@@ -433,6 +397,7 @@ class _PostBoxState extends State<PostBox> {
                 }
               },
               child: TextField(
+                focusNode: _commentNode,
                 controller: _commentController,
                 minLines: 1,
                 maxLines: 5,
@@ -513,8 +478,12 @@ class _PostBoxState extends State<PostBox> {
               const Spacer(),
               //TODO: Tất cả bình luận ▼
               TextButton(
-                  onPressed: _showFilters,
-                  child: const Text('Tất cả bình luận ▼')),
+                onPressed: _showFilters,
+                child: Row(mainAxisSize:MainAxisSize.min, children: const [
+                  Text('Tất cả bình luận '),
+                  Icon(Icons.arrow_drop_down_outlined),
+                ]),
+              ),
             ]),
             //TODO: list comments with filter
             _listCommentsWithFilter(),
@@ -529,8 +498,12 @@ class _PostBoxState extends State<PostBox> {
             Row(children: [
               const Spacer(),
               TextButton(
-                  onPressed: _showFilters,
-                  child: const Text('Gần đây nhất ▼')),
+                onPressed: _showFilters,
+                child: Row(mainAxisSize:MainAxisSize.min, children: const [
+                  Text('Gần đây nhất'),
+                  Icon(Icons.arrow_drop_down_outlined),
+                ]),
+              ),
             ]),
             //TODO: input row
             _inputRow(),
@@ -599,7 +572,7 @@ class _PostBoxState extends State<PostBox> {
                             }),
                         const SizedBox(width: 15.0),
                         //TODO: rating
-                        _rating(context),
+                        RatingWidget(myUserId: widget.post.createdBy),
                       ]),
                       const SizedBox(height: 5.0),
                       //TODO: date
@@ -693,6 +666,7 @@ class _PostBoxState extends State<PostBox> {
                               setState(() {
                                 _showComments = true;
                               });
+                              _commentNode.requestFocus();
                             },
                             icon: Icon(Icons.comment,
                                 color:
