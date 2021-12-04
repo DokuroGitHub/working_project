@@ -382,6 +382,14 @@ class DatabaseService {
     });
   }
 
+  //TODO: deleteComment
+  Future<void> deleteComment(String documentPath) async {
+    var ref = FirebaseFirestore.instance.doc(documentPath);
+    ref.delete().whenComplete(() {
+      print('deleted ${ref.path}');
+    });
+  }
+
   //TODO: getStreamListCommentInPost
   Stream<List<Comment>> getStreamListCommentInPost(String postId,
       {CommentQuery? query, int limit=0}) {

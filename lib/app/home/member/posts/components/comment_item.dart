@@ -23,7 +23,7 @@ class CommentItem extends StatefulWidget {
 
   final MyUser myUser;
   final Comment comment;
-  final VoidCallback? onReplyTap;
+  final Function? onReplyTap;
 
   @override
   _CommentItemState createState() => _CommentItemState();
@@ -62,7 +62,7 @@ class _CommentItemState extends State<CommentItem> {
         );
         //TODO: add
         await DatabaseService().addCommentToComment(
-          replyForCommentDocumentPath: comment.documentPath!,
+          replyForCommentDocumentPath: widget.comment.documentPath!,
           commentMap: comment.toMap(),
         );
         Future.delayed(const Duration(), () {
@@ -101,6 +101,139 @@ class _CommentItemState extends State<CommentItem> {
     } catch (e) {
       print(
           'posts_page, post_box, comment_item, deleteEmoteInComment error: $e');
+    }
+  }
+
+  Future<void> _deleteComment() async {
+    try {
+      await DatabaseService().deleteComment(widget.comment.documentPath!);
+      final snackBar = SnackBar(
+        content: const Text('Deleted comment successfully!'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }catch(e){
+      print('comment_item, _deleteComment, error: $e');
+      final snackBar = SnackBar(
+        content: const Text('Deleted failed!'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            // Some code to undo the change.
+          },
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future<void> _confirmDelete() async {
+    await showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Row(children: [
+              const Text('Xóa bình luận?'),
+              const Spacer(),
+              IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: const Icon(Icons.cancel)),
+            ],),
+            content: const Text('Bạn có chắc chắn muốn xóa bình luận này không?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  //TODO: Cancel
+                  Navigator.pop(context);
+                },
+                child: const Text('Hủy'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  //TODO: delete
+                  _deleteComment();
+                },
+                child: const Text('Xóa'),
+              ),
+            ],
+          );
+        });
+  }
+
+  Future<void> _on3dotsClick() async {
+    //TODO: check if i created this comment
+    if(widget.comment.createdBy==widget.myUser.id!){
+      //TODO: this is my comment, edit/delete
+      await showDialog<void>(
+          context: context,
+          builder: (BuildContext context) {
+            return SimpleDialog(
+              title: const Text('Chọn thao tác'),
+              children: <Widget>[
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    //TODO: edit
+
+                  },
+                  child: const Text('Chỉnh sửa'),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    //TODO: delete, confirm
+                    _confirmDelete();
+                  },
+                  child: const Text('Xóa'),
+                ),
+              ],
+            );
+          });
+    }else{
+      //TODO: not my comment, report/hide
+      await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) {
+            return SimpleDialog(
+              title: const Text('Chọn thao tác'),
+              children: <Widget>[
+                SimpleDialogOption(
+                  onPressed: () {
+                    //TODO: report
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Report'),
+                ),
+                SimpleDialogOption(
+                  onPressed: () {
+                    //TODO: hide
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Hide'),
+                ),
+              ],
+            );
+          });
+    }
+  }
+
+  Future<void> _setNameTag(String replyToMyUserid) async {
+    String text = _replyController.text;
+    text = text.replaceAll(RegExp(r'(?=@).*? (?<=, )'), '');
+    if(text.trim().isEmpty) {
+      MyUser? myUser = await DatabaseService().getMyUserByDocumentId(replyToMyUserid);
+      String? name = myUser?.name;
+      setState(() {
+        _replyController.text = '@$name, ';
+      });
     }
   }
 
@@ -180,8 +313,9 @@ class _CommentItemState extends State<CommentItem> {
 
   Widget _listRepliesWithFilter() {
     return StreamBuilder(
-      stream: DatabaseService()
-          .getStreamListCommentInComment(widget.comment.documentPath!, limit: _limit),
+      stream: DatabaseService().getStreamListCommentInComment(
+          widget.comment.documentPath!,
+          limit: _limit),
       builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
         if (snapshot.hasError) {
           print(
@@ -191,22 +325,23 @@ class _CommentItemState extends State<CommentItem> {
         if (snapshot.hasData) {
           List<Comment> comments = snapshot.data!;
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: comments.map((comment) {
-            //TODO: cần xác định bài viết có tối đa bao nhiêu bậc comment
-            //TODO: và comment này đang ở bậc bao nhiêu
-            //TODO: tạm thời default post.maxRep=2, comment.rep=1
-            //TODO: comment này chỉ được tối đa thêm 1 rep -> onRepTap!=null
-            return CommentItem(
-              myUser: widget.myUser,
-              comment: comment,
-              onReplyTap: (){
-                //TODO: focus to this reply node
-                print('onReplyTap, comment này ko thể reply thêm nhánh');
-                _replyNode.requestFocus();
-              },
-            );
-          }).toList());
+                //TODO: cần xác định bài viết có tối đa bao nhiêu bậc comment
+                //TODO: và comment này đang ở bậc bao nhiêu
+                //TODO: tạm thời default post.maxRep=2, comment.rep=1
+                //TODO: comment này chỉ được tối đa thêm 1 rep -> onRepTap!=null
+                return CommentItem(
+                  myUser: widget.myUser,
+                  comment: comment,
+                  onReplyTap: (String myUserId) async {
+                    //TODO: focus to this reply node
+                    print('onReplyTap, comment này ko thể reply thêm nhánh');
+                    await _setNameTag(myUserId);
+                    _replyNode.requestFocus();
+                  },
+                );
+              }).toList());
         }
         return Container();
       },
@@ -215,7 +350,8 @@ class _CommentItemState extends State<CommentItem> {
 
   Widget _inputRow() {
     return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width-90),
+      constraints:
+          BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 90),
       child: Padding(
         padding: const EdgeInsets.only(top: 5, bottom: 5),
         child: Row(
@@ -363,19 +499,44 @@ class _CommentItemState extends State<CommentItem> {
     );
   }
 
+  Widget _repliesCountWidget() {
+    return StreamBuilder(
+      stream: DatabaseService()
+          .getStreamListCommentInComment(widget.comment.documentPath!),
+      builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
+        if (snapshot.hasData) {
+          num length = snapshot.data!.length;
+          if(length>0) {
+            return TextButton.icon(
+              onPressed: () {
+                  setState(() {
+                    _showReplies = true;
+                  });
+                  },
+              icon: const Icon(Icons.subdirectory_arrow_right),
+              label: Text('$length phản hồi'),
+            );
+          }
+        }
+        return Container();
+      },
+    );
+  }
+
   Widget _viewMoreRepliesWidget() {
     return StreamBuilder(
-      stream: DatabaseService().getStreamListCommentInComment(widget.comment.documentPath!),
+      stream: DatabaseService()
+          .getStreamListCommentInComment(widget.comment.documentPath!),
       builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
         if (snapshot.hasData) {
           num length = snapshot.data!.length;
           num gap = length - _limit;
-          if (gap>0) {
+          if (gap > 0) {
             //TODO: Xem thêm 3 bình luận
             TextButton(
-                onPressed: (){
+                onPressed: () {
                   setState(() {
-                    _limit+=_defaultLimitIncrease;
+                    _limit += _defaultLimitIncrease;
                   });
                 },
                 child: Text('Xem thêm $gap bình luận'));
@@ -445,7 +606,7 @@ class _CommentItemState extends State<CommentItem> {
                         const SizedBox(width: 10),
                         //TODO: 3 dots: edit, delete / hide, report
                         IconButton(
-                            onPressed: () {},
+                            onPressed: _on3dotsClick,
                             icon: const Icon(Icons.more_horiz)),
                         //const Spacer(),
                       ],
@@ -503,16 +664,18 @@ class _CommentItemState extends State<CommentItem> {
                         const Text('·'),
                         //TODO: reply button
                         TextButton(
-                          onPressed: () {
-                            if (widget.onReplyTap==null) {
+                          onPressed: () async {
+                            if (widget.onReplyTap == null) {
                               //TODO: comment này có thể phản hồi
                               setState(() {
                                 _showReplies = true;
                               });
+                              await _setNameTag(widget.comment.createdBy);
                               _replyNode.requestFocus();
-                            }else{
+                            } else {
+                              //TODO: setNameTag bằng createdBy của comment này
                               //TODO: focus vào _replyNode của comment mà comment này đang reply
-                              widget.onReplyTap!();
+                              widget.onReplyTap!(widget.comment.createdBy);
                             }
                           },
                           child: Text('Phản hồi',
@@ -548,11 +711,11 @@ class _CommentItemState extends State<CommentItem> {
             ),
 
             //TODO: replies / -> [Avatar] Thanh Do Vo da tra loi . 4 phan hoi 16 phut
+            if(!_showReplies)
+              _repliesCountWidget(),
             //TODO: _showReplies + input row
             if (_showReplies)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 //TODO: list phản hồi
                 _listRepliesWithFilter(),
                 //TODO: Xem thêm 3 phản hồi
