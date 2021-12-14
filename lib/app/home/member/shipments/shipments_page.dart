@@ -120,6 +120,7 @@ class _ShipmentsPageState extends State<ShipmentsPage> {
           }),
       floatingActionButton: FloatingActionButton(
           tooltip: 'Thêm mới shipment',
+          hoverColor: Colors.redAccent,
           child: const Icon(Icons.add),
           onPressed: () {
             _showEditShipmentPage(context);

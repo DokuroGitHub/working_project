@@ -188,7 +188,7 @@ class _FinishMyUserInfoPageState extends State<FinishMyUserInfoPage> {
           child: _buildUserInfo(widget.user),
         ),
       ),
-      backgroundColor: Colors.grey[200],
+      //backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
         //TODO: input fields
         child: _buildInPutFields(context),

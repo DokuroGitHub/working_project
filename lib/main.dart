@@ -25,6 +25,7 @@ import 'app/home/home_page_widget.dart';
 import 'app/sign_in/sign_in_page.dart';
 import 'app/welcome/welcome_view_model.dart';
 
+//TODO: Phát triển mạng xã hội shipper
 //TODO: -d chrome --web-hostname localhost --web-port 6969
 //TODO: keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
 Future<void> main() async {

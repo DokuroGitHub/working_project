@@ -34,9 +34,9 @@ class HomePageWidget extends StatelessWidget {
             print('HomePageWidget, ${snapshot.error}');
             return emptyPage;
           }
-          if(snapshot.hasData){
-            MyUser? myUser = snapshot.data;
-            if (myUser != null) {
+          if(snapshot.connectionState != ConnectionState.waiting){
+            if(snapshot.data != null){
+              MyUser myUser = snapshot.data!;
               print('HomePageWidget, myUser: $myUser');
               switch(myUser.role){
                 case 'ADMIN':
@@ -46,16 +46,16 @@ class HomePageWidget extends StatelessWidget {
                 default:  //TODO: case 'MEMBER':
                   return HomePageForMember(myUser: myUser);
               }
-            }else {
-              print('HomePageWidget, myUser null, FinishMyUserInfoPage');
-              //TODO: FinishMyUserInfoPage
-              return FinishMyUserInfoPage(user: user);
             }
+            print('HomePageWidget, myUser null, FinishMyUserInfoPage');
+            //TODO: FinishMyUserInfoPage
+            return FinishMyUserInfoPage(user: user);
           }
+          print('state: ${snapshot.connectionState}');
           return const Scaffold(
             body: EmptyContent(
                 title: 'Loading...',
-                message: 'Please wait a moment'),
+                message: 'Please wait'),
           );
         }
     );
