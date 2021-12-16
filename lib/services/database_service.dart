@@ -198,12 +198,26 @@ class DatabaseService {
     });
   }
 
-  //TODO: getStreamListMyUse
+  //TODO: getStreamListPost
   Stream<List<Post>> getStreamListPost() {
     return FirebaseFirestore.instance.collection('post').snapshots().map(
         (snapshot) => snapshot.docs
             .map((doc) => Post.fromMap(doc.data(), doc.id))
             .toList());
+  }
+
+  //TODO: getStreamPostByDocumentId
+  Stream<Post?> getStreamPostByDocumentId(String documentId) {
+    return FirebaseFirestore.instance
+        .doc('post/$documentId')
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) {
+        print('post/$documentId not exists');
+        return null;
+      }
+      return Post.fromMap(snapshot.data(), snapshot.id);
+    });
   }
 
   //TODO: ------------------- Emote -----------------------------

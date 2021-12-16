@@ -103,7 +103,7 @@ class _VideoPlayerBoxState extends State<VideoPlayerBox> {
           return Stack(children: [
             FadeInImage.assetNetwork(
               alignment: Alignment.topCenter,
-              placeholder: 'images/video_place_here.png',
+              placeholder: 'assets/images/video_place_here.png',
               image: widget.attachment.thumbURL ?? defaultThumbURL,
               fit: BoxFit.fill,
             ),

@@ -5,16 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:working_project/services/database_service.dart';
-import 'package:working_project/some_unused_page.dart';
-import 'app/home/feedbacks/feedbacks_page.dart';
 import 'app/home/member/posts/posts_page.dart';
-import 'app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
-import 'app/home/member/shipments/shipment_details/shipment_details_page.dart';
-import 'app/home/member/shipments/shipments_page.dart';
 import 'app/welcome/welcome_page.dart';
 import 'locale_service.dart';
 import 'models/my_user.dart';
-import 'models/shipment.dart';
 import 'routing/app_router.dart';
 import 'services/shared_preferences_service.dart';
 import 'theme_service.dart';
@@ -38,7 +32,7 @@ Future<void> main() async {
         SharedPreferencesService(await SharedPreferences.getInstance()),
       ),
     ],
-    child: MyApp(),
+    child: MyAppForTestPages(),
   ));
 }
 
@@ -91,6 +85,7 @@ class TestPage extends StatelessWidget {
 
   final String myUserId1 = 'peXkGVl6GvcllR7D9g5oPOm0zV62';
   final String shipmentId1 = 'W6QMVKwvFRviDIMqrosX';
+  //TODO: page to test shipmentId1=2Ea3xqvgoVA7tPj1N6ls shipmentId2=W6QMVKwvFRviDIMqrosX
 
   @override
   Widget build(BuildContext context) {
@@ -104,66 +99,55 @@ class TestPage extends StatelessWidget {
         }
         if(snapshot.data!=null){
           var myUser = snapshot.data!;
-          return StreamBuilder(
-              stream: DatabaseService().getStreamShipmentByDocumentId(shipmentId1),
-              builder: (BuildContext context, AsyncSnapshot<Shipment?> snapshot) {
-                if(snapshot.hasError){
-                  print('test page, snapshot has error: ${snapshot.error}');
-                  return Container();
-                }
-                if(snapshot.data!=null){
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Test Page'),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.lightbulb),
-                          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-                          onPressed: ThemeService().switchTheme,
-                        ),
-                        PopupMenuButton<String>(
-                          icon: Icon(Icons.more_vert,
-                            color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-                          ),
-                          onSelected: LocaleService().changeLocale,
-                          itemBuilder: (BuildContext context) {
-                            return [
-                              PopupMenuItem<String>(
-                                value: 'vi',
-                                child: Text('Tiếng Việt',
-                                    style: TextStyle(
-                                        color: LocaleService().languageCode == 'vi'
-                                            ? Colors.red
-                                            : Colors.blue)),
-                              ),
-                              PopupMenuItem<String>(
-                                value: 'en',
-                                child: Text('English',
-                                    style: TextStyle(
-                                        color: LocaleService().languageCode == 'en'
-                                            ? Colors.red
-                                            : Colors.blue)),
-                              ),
-                              PopupMenuItem<String>(
-                                value: 'es',
-                                child: Text('Espanol',
-                                    style: TextStyle(
-                                        color: LocaleService().languageCode == 'es'
-                                            ? Colors.red
-                                            : Colors.blue)),
-                              ),
-                            ];
-                          },
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                    ),
-                    //TODO: page to test shipmentId1=2Ea3xqvgoVA7tPj1N6ls shipmentId2=W6QMVKwvFRviDIMqrosX
-                    body: PostsPage(myUser: myUser),
-                  );
-                }
-                return Container();
-              });
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Test Page'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.lightbulb),
+                  color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  onPressed: ThemeService().switchTheme,
+                ),
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert,
+                    color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                  ),
+                  onSelected: LocaleService().changeLocale,
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<String>(
+                        value: 'vi',
+                        child: Text('Tiếng Việt',
+                            style: TextStyle(
+                                color: LocaleService().languageCode == 'vi'
+                                    ? Colors.red
+                                    : Colors.blue)),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'en',
+                        child: Text('English',
+                            style: TextStyle(
+                                color: LocaleService().languageCode == 'en'
+                                    ? Colors.red
+                                    : Colors.blue)),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'es',
+                        child: Text('Espanol',
+                            style: TextStyle(
+                                color: LocaleService().languageCode == 'es'
+                                    ? Colors.red
+                                    : Colors.blue)),
+                      ),
+                    ];
+                  },
+                ),
+                const SizedBox(width: 10),
+              ],
+            ),
+
+            body: PostsPage(myUser: myUser),
+          );
         }
         return Container();
       });

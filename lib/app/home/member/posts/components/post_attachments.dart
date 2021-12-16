@@ -32,7 +32,7 @@ class PostAttachments extends StatelessWidget {
         onTap: onTap,
         child: FadeInImage.assetNetwork(
           alignment: Alignment.topCenter,
-          placeholder: 'images/video_place_here.png',
+          placeholder: 'assets/images/video_place_here.png',
           image: thumbURL ?? defaultThumbURL,
           fit: BoxFit.fill,
         ));

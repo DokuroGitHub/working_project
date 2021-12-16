@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 //I forgot to add some margin between the tiles
 Widget storyTile(String avatarUrl, String storyUrl, String userName) {
   return Container(
-    margin: EdgeInsets.only(right: 20.0),
+    margin: const EdgeInsets.only(right: 20.0),
     height: 144.0,
     width: 120.0,
     decoration: BoxDecoration(
@@ -16,7 +16,7 @@ Widget storyTile(String avatarUrl, String storyUrl, String userName) {
           fit: BoxFit.cover,
         )),
     child: Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +29,7 @@ Widget storyTile(String avatarUrl, String storyUrl, String userName) {
           ),
           Text(
             userName,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w800,
               fontSize: 18.0,
