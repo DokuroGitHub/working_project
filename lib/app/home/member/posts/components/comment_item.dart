@@ -618,8 +618,10 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
       onTapDown: onTapDownBtn,
       onTapUp: (TapUpDetails tapUpDetails)=>onTapUpBtn(tapUpDetails, emoteInt:emoteInt),
       //onTap: ()=>onTapBtn(emoteInt),
-      child: ElevatedButton(onPressed: () =>onTapBtn(emoteInt),
-      child: _emoteText(emoteInt: emoteInt, onPress: ()=>onTapBtn(emoteInt)),),
+      child: TextButton(
+        onPressed: () => onTapBtn(emoteInt),
+        child: _emoteText(emoteInt),
+      ),
     );
   }
 
@@ -643,7 +645,7 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
   }
 
   //TODO: chua chac co nen truyen onPress hay ko
-  Widget _emoteText({required int emoteInt, required VoidCallback onPress}) {
+  Widget _emoteText(int emoteInt) {
     switch (emoteInt) {
       case 1:
         return const Text('Like', style: TextStyle(color: Colors.blue));
@@ -1773,7 +1775,7 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
 
                     //TODO: attachments + emote counts
                     SizedBox(
-                      width: MediaQuery.of(context).size.width-100,
+                      width: MediaQuery.of(context).size.width-142,
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1784,100 +1786,299 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
                             _emoteCounts2(),
                        ]),
                     ),
-                    //TODO: like+comment+share+date+emoteCounts
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        //TODO: like button
-                        //TODO:------can thay = emote button moi--------
-                        StreamBuilder(
-                          stream: DatabaseService().getStreamEmoteInComment(
-                              commentDocumentPath: widget.comment.documentPath!,
-                              myUserId: widget.myUser.id!),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<Emote?> snapshot) {
-                            // if (snapshot.hasData) {
-                            //   //TODO: da tha emote
-                            //   return renderBtnLike(snapshot.data!);
-                            //   // return TextButton(
-                            //   //   child: _emoteText(snapshot.data!.emoteCode),
-                            //   //   onPressed: () {
-                            //   //     setState(() {
-                            //   //       _showEmoteSelectionsBar = false;
-                            //   //     });
-                            //   //     deleteEmoteInComment();
-                            //   //   },
-                            //   //   onLongPress: () {
-                            //   //     setState(() {
-                            //   //       _showEmoteSelectionsBar = true;
-                            //   //     });
-                            //   //     Future.delayed(const Duration(seconds: 3),
-                            //   //         () {
-                            //   //       setState(() {
-                            //   //         _showEmoteSelectionsBar = false;
-                            //   //       });
-                            //   //     });
-                            //   //   },
-                            //   // );
-                            // }
-                            //TODO: chua tha emote
-                            return renderBtnLike(snapshot.data);
-                            // return TextButton(
-                            //   child: Text('Like',
-                            //       style: Theme.of(context).textTheme.button),
-                            //   onPressed: () {
-                            //     setState(() {
-                            //       _showEmoteSelectionsBar = false;
-                            //     });
-                            //     addEmoteToComment('LIKE');
-                            //   },
-                            // );
-                          },
-                        ),
-                        const Text('·'),
-                        //TODO: reply button
-                        TextButton(
-                          onPressed: () async {
-                            if (widget.onReplyTap == null) {
-                              //TODO: comment này có thể phản hồi
-                              setState(() {
-                                _showReplies = true;
-                              });
-                              await _setNameTag(widget.comment.createdBy);
-                              _replyNode.requestFocus();
-                            } else {
-                              //TODO: setNameTag bằng createdBy của comment này
-                              //TODO: focus vào _replyNode của comment mà comment này đang reply
-                              widget.onReplyTap!(widget.comment.createdBy);
-                            }
-                          },
-                          child: Text('Phản hồi',
-                              style: Theme.of(context).textTheme.button),
-                        ),
-                        const Text('·'),
-                        //TODO: share button
-                        TextButton(
-                          onPressed: () {},
-                          child: Text('Chia sẻ',
-                              style: Theme.of(context).textTheme.button),
-                        ),
-                        const Text('·'),
-                        //TODO: date
-                        TextButton(
-                          onPressed: () {
-                            print('tap date');
-                          },
-                          child: Text(
-                              Helper.timeToString(widget.comment.createdAt),
-                              style: Theme.of(context).textTheme.button),
-                        ),
-                        //const SizedBox(width: 10),
-                        //_emoteCounts(),
-                        //const SizedBox(width: 10),
-                      ],
-                    ),
+                    // //TODO: like+comment+share+date+emoteCounts
+                    // Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     //TODO: like button
+                    //     //TODO:------can thay = emote button moi--------
+                    //     StreamBuilder(
+                    //       stream: DatabaseService().getStreamEmoteInComment(
+                    //           commentDocumentPath: widget.comment.documentPath!,
+                    //           myUserId: widget.myUser.id!),
+                    //       builder: (BuildContext context,
+                    //           AsyncSnapshot<Emote?> snapshot) {
+                    //         // if (snapshot.hasData) {
+                    //         //   //TODO: da tha emote
+                    //         //   return renderBtnLike(snapshot.data!);
+                    //         //   // return TextButton(
+                    //         //   //   child: _emoteText(snapshot.data!.emoteCode),
+                    //         //   //   onPressed: () {
+                    //         //   //     setState(() {
+                    //         //   //       _showEmoteSelectionsBar = false;
+                    //         //   //     });
+                    //         //   //     deleteEmoteInComment();
+                    //         //   //   },
+                    //         //   //   onLongPress: () {
+                    //         //   //     setState(() {
+                    //         //   //       _showEmoteSelectionsBar = true;
+                    //         //   //     });
+                    //         //   //     Future.delayed(const Duration(seconds: 3),
+                    //         //   //         () {
+                    //         //   //       setState(() {
+                    //         //   //         _showEmoteSelectionsBar = false;
+                    //         //   //       });
+                    //         //   //     });
+                    //         //   //   },
+                    //         //   // );
+                    //         // }
+                    //         //TODO: chua tha emote
+                    //         return renderBtnLike(snapshot.data);
+                    //         // return TextButton(
+                    //         //   child: Text('Like',
+                    //         //       style: Theme.of(context).textTheme.button),
+                    //         //   onPressed: () {
+                    //         //     setState(() {
+                    //         //       _showEmoteSelectionsBar = false;
+                    //         //     });
+                    //         //     addEmoteToComment('LIKE');
+                    //         //   },
+                    //         // );
+                    //       },
+                    //     ),
+                    //     const Text('·'),
+                    //     //TODO: reply button
+                    //     TextButton(
+                    //       onPressed: () async {
+                    //         if (widget.onReplyTap == null) {
+                    //           //TODO: comment này có thể phản hồi
+                    //           setState(() {
+                    //             _showReplies = true;
+                    //           });
+                    //           await _setNameTag(widget.comment.createdBy);
+                    //           _replyNode.requestFocus();
+                    //         } else {
+                    //           //TODO: setNameTag bằng createdBy của comment này
+                    //           //TODO: focus vào _replyNode của comment mà comment này đang reply
+                    //           widget.onReplyTap!(widget.comment.createdBy);
+                    //         }
+                    //       },
+                    //       child: Text('Phản hồi',
+                    //           style: Theme.of(context).textTheme.button),
+                    //     ),
+                    //     const Text('·'),
+                    //     //TODO: share button
+                    //     TextButton(
+                    //       onPressed: () {},
+                    //       child: Text('Chia sẻ',
+                    //           style: Theme.of(context).textTheme.button),
+                    //     ),
+                    //     const Text('·'),
+                    //     //TODO: date
+                    //     TextButton(
+                    //       onPressed: () {
+                    //         print('tap date');
+                    //       },
+                    //       child: Text(
+                    //           Helper.timeToString(widget.comment.createdAt),
+                    //           style: Theme.of(context).textTheme.button),
+                    //     ),
+                    //     //const SizedBox(width: 10),
+                    //     //_emoteCounts(),
+                    //     //const SizedBox(width: 10),
+                    //   ],
+                    // ),
+
+                    const SizedBox(height: 50.0),
                   ],
                 ),
+
+                //TODO: Box background + emotes
+                Positioned(
+                  bottom: 0,
+                  child: Stack(
+                    children: <Widget>[
+                      // Box
+                      renderBox(),
+
+                      // Icons
+                      renderIcons(),
+                    ],
+                    alignment: Alignment.bottomCenter,
+                  ),
+                ),
+
+                //TODO: like+comment+share+date+emoteCounts
+                Positioned(left:0, bottom: 0, child: Stack(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width-123,
+                      height: 200,
+                      child: GestureDetector(
+                    child: Column(
+                        children:[
+                          const Spacer(),
+                          //TODO: like+comment+share+date+emoteCounts
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              //TODO: like button
+                              StreamBuilder(
+                                stream: DatabaseService().getStreamEmoteInComment(
+                                    commentDocumentPath: widget.comment.documentPath!,
+                                    myUserId: widget.myUser.id!),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<Emote?> snapshot) {
+                                  return renderBtnLike(snapshot.data);
+                                },
+                              ),
+                              const Text('·'),
+                              //TODO: reply button
+                              TextButton(
+                                onPressed: () async {
+                                  if (widget.onReplyTap == null) {
+                                    //TODO: comment này có thể phản hồi
+                                    setState(() {
+                                      _showReplies = true;
+                                    });
+                                    await _setNameTag(widget.comment.createdBy);
+                                    _replyNode.requestFocus();
+                                  } else {
+                                    //TODO: setNameTag bằng createdBy của comment này
+                                    //TODO: focus vào _replyNode của comment mà comment này đang reply
+                                    widget.onReplyTap!(widget.comment.createdBy);
+                                  }
+                                },
+                                child: Text('Phản hồi',
+                                    style: Theme.of(context).textTheme.button),
+                              ),
+                              const Text('·'),
+                              //TODO: share button
+                              TextButton(
+                                onPressed: () {},
+                                child: Text('Chia sẻ',
+                                    style: Theme.of(context).textTheme.button),
+                              ),
+                              const Text('·'),
+                              //TODO: date
+                              TextButton(
+                                onPressed: () {
+                                  print('tap date');
+                                },
+                                child: Text(
+                                    Helper.timeToString(widget.comment.createdAt),
+                                    style: Theme.of(context).textTheme.button),
+                              ),
+                            ],
+                          ),
+                        ]
+                    ),
+                    onHorizontalDragEnd: onHorizontalDragEndBoxIcon,
+                    onHorizontalDragUpdate: onHorizontalDragUpdateBoxIcon,
+                      ),
+                    ),
+
+                  //TODO: Icons when jump
+                  // Icon like
+                  whichIconUserChoose == 1 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/like.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconLikeWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                  // Icon love
+                  whichIconUserChoose == 2 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/love.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconLoveWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                  // Icon haha
+                  whichIconUserChoose == 3 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/haha.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconHahaWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                  // Icon Wow
+                  whichIconUserChoose == 4 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/wow.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconWowWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                  // Icon sad
+                  whichIconUserChoose == 5 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/sad.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconSadWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                  // Icon angry
+                  whichIconUserChoose == 6 && !isDragging
+                      ? Container(
+                    child: Transform.scale(
+                      child: Image.asset(
+                        'assets/images/emotes/angry.gif',
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      scale: zoomIconWhenRelease.value as double,
+                    ),
+                    margin: EdgeInsets.only(
+                      top: processTopPosition(moveUpIconWhenRelease.value as double),
+                      left: moveLeftIconAngryWhenRelease.value as double,
+                    ),
+                  )
+                      : Container(),
+
+                ],)),
 
                 //TODO: emote selections bar
                 //if (_showEmoteSelectionsBar) _emoteSelectionsBar(),

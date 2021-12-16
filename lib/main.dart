@@ -24,8 +24,10 @@ import 'app/welcome/welcome_view_model.dart';
 //TODO: keytool -list -v -keystore "%USERPROFILE%\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  print('init firebase');
   await Firebase.initializeApp();
   //TODO: init ProviderScope de xai cac providers
+  print('runApp ProviderScope');
   runApp(ProviderScope(
     overrides: [
       sharedPreferencesServiceProvider.overrideWithValue(
@@ -149,7 +151,7 @@ class TestPage extends StatelessWidget {
             body: PostsPage(myUser: myUser),
           );
         }
-        return Container();
+        return Center(child: Text('TestPage Loading...'));
       });
   }
 }

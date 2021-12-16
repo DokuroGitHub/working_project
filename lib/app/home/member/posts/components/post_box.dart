@@ -1753,7 +1753,7 @@ class _PostBoxState extends State<PostBox> with TickerProviderStateMixin{
                   const Divider(
                     thickness: 1.5,
                   ),
-                  const SizedBox(height: 30,),
+                  const SizedBox(height: 40,),
                 ],),
 
                 //TODO: Box background + emotes
