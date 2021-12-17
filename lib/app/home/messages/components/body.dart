@@ -1,6 +1,15 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
+import 'package:working_project/services/storage_service.dart';
 import '/app/home/member/posts/components/my_user_avatar.dart';
 import '/common_widgets/avatar.dart';
 import '/common_widgets/helper.dart';
@@ -27,13 +36,148 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   bool _showBottom = false;
+  final FocusNode _focusNode = FocusNode();
   final TextEditingController _messageController = TextEditingController();
+
+  //TODO: file components
+  List<File> pickingFiles = [];
+  List<Uint8List?> pickingFileThumbnails = [];
 
   @override
   void dispose() {
+    _focusNode.dispose();
     _messageController.dispose();
     super.dispose();
   }
+
+  //TODO: ------working----------start
+  Future _getImageGallery() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile;
+
+    pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      final thumbnail = await _filePathToThumbnails(file);
+      if(thumbnail!=null) {
+        setState(() {
+          pickingFiles.add(file);
+          pickingFileThumbnails.add(thumbnail);
+        });
+      }
+    }
+  }
+
+  Future _getImageCamera() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile;
+
+    pickedFile = await imagePicker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      final thumbnail = await _filePathToThumbnails(file);
+      if(thumbnail!=null) {
+        setState(() {
+          pickingFiles.add(file);
+          pickingFileThumbnails.add(thumbnail);
+        });
+      }
+    }
+  }
+
+  Future _getVideoGallery() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile;
+
+    pickedFile = await imagePicker.pickVideo(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      final thumbnail = await _filePathToThumbnails(file);
+      if(thumbnail!=null) {
+        setState(() {
+          pickingFiles.add(file);
+          pickingFileThumbnails.add(thumbnail);
+        });
+      }
+    }
+  }
+
+  Future _getVideoCamera() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? pickedFile;
+
+    pickedFile = await imagePicker.pickVideo(source: ImageSource.camera);
+    if (pickedFile != null) {
+      File file = File(pickedFile.path);
+      final thumbnail = await _filePathToThumbnails(file);
+      if(thumbnail!=null) {
+        setState(() {
+          pickingFiles.add(file);
+          pickingFileThumbnails.add(thumbnail);
+        });
+      }
+    }
+  }
+
+  Future _getFiles() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+
+    if (result != null) {
+      List<File> files = result.paths.map((path) => File(path!)).toList();
+      for(int i = 0;i<files.length;i++){
+        File file = File(files[i].path);
+        final thumbnail = await _filePathToThumbnails(file);
+        if(thumbnail!=null) {
+          setState(() {
+            pickingFiles.add(file);
+            pickingFileThumbnails.add(thumbnail);
+          });
+        }
+      }
+    } else {
+      // User canceled the picker
+    }
+  }
+
+  Future<String?> _uploadFile(File file) async {
+    try {
+      String fileName = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
+      UploadTask uploadTask = StorageService().uploadFileInConversation(
+        file: file,
+        fileName: fileName,
+        conversationId: widget.conversation.id!,
+        myUserId: widget.myUser.id!,
+      );
+      TaskSnapshot snapshot = await uploadTask;
+      String fileURL = await snapshot.ref.getDownloadURL();
+      return fileURL;
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.message ?? e.toString());
+    }
+  }
+  Future<String?> _uploadData(Uint8List data) async {
+    try {
+      String fileName = DateTime
+          .now()
+          .millisecondsSinceEpoch
+          .toString();
+      UploadTask uploadTask = StorageService().uploadDataInConversation(
+        data: data,
+        fileName: fileName,
+        conversationId: widget.conversation.id!,
+        myUserId: widget.myUser.id!,
+      );
+      TaskSnapshot snapshot = await uploadTask;
+      String fileURL = await snapshot.ref.getDownloadURL();
+      return fileURL;
+    } on FirebaseException catch (e) {
+      Fluttertoast.showToast(msg: e.message ?? e.toString());
+    }
+  }
+  //TODO: ------working----------end
 
   Widget _circleAvatar({String? photoURL}) {
     return CircleAvatar(
@@ -60,7 +204,7 @@ class _BodyState extends State<Body> {
 
   Widget _circleAvatarForGroup(String myUser1, String myUser2) {
     return CircleAvatar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).textTheme.bodyText1?.color,
       radius: 25.0,
       child: Stack(children: [
         Positioned(
@@ -315,13 +459,13 @@ class _BodyState extends State<Body> {
                     //TODO: nickname??name
                     _nickNameOrName(message.createdBy),
                     //TODO: text
-                    Container(
+                    if(message.text != null && message.text!.trim().isNotEmpty) Container(
                       constraints: BoxConstraints(
                           maxWidth: MediaQuery.of(context).size.width * .6),
                       padding: const EdgeInsets.all(15.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.only(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.50),
+                        borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(25),
                           bottomLeft: Radius.circular(25),
                           bottomRight: Radius.circular(25),
@@ -373,7 +517,7 @@ class _BodyState extends State<Body> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                   //TODO: text
-                  Container(
+                    if(message.text != null && message.text!.trim().isNotEmpty) Container(
                     constraints: BoxConstraints(
                         maxWidth: MediaQuery.of(context).size.width * .6),
                     padding: const EdgeInsets.all(15.0),
@@ -463,10 +607,67 @@ class _BodyState extends State<Body> {
     );
   }
 
+  Future<Uint8List?> _filePathToThumbnails(File file)async{
+    if(_filePathToType(file.path)=='VIDEO'){
+      return await VideoThumbnail.thumbnailData(
+        video: file.path,
+        imageFormat: ImageFormat.PNG,
+        maxWidth: 256, // specify the width of the thumbnail, let the height auto-scaled to keep the source aspect ratio
+        //quality: 25,
+      );
+    }
+
+  }
+
+  String _filePathToType(String filePath){
+    switch(filePath.substring(filePath.length-3).toUpperCase()){
+      case 'JPG':
+      case 'PNG':
+      case 'EBM':
+        return 'IMAGE';
+      case 'GIF':
+        return 'GIF';
+      case 'MP4':
+        return 'VIDEO';
+      case 'MP3':
+        return 'AUDIO';
+      default:
+        return 'FILE';
+    }
+  }
+
   Future _sendMessage() async {
+    _focusNode.unfocus();
+
     String text = _messageController.text.trim();
     print('message: $text');
     List<Attachment> attachments = [];
+    for(int i = 0; i< pickingFiles.length; i++) {
+      File file = pickingFiles[i];
+      //File thumbnailFile = File.fromRawPath(pickingFileThumbnails[i]);
+      String? fileURL = await _uploadFile(file);
+      String? thumbURL;
+      if(pickingFileThumbnails[i]!=null){
+        thumbURL = await _uploadData(pickingFileThumbnails[i]!);
+      }
+      //TODO: cha biet lay thumbURL ntn
+      if(fileURL!=null) {
+        Attachment attachment = Attachment(
+          fileURL: fileURL,
+          thumbURL: thumbURL,
+          type: _filePathToType(file.path),
+        );
+        attachments.add(attachment);
+      }
+    }
+
+    //TODO: clean inputs
+    _messageController.clear();
+    setState(() {
+      pickingFiles = [];
+      pickingFileThumbnails = [];
+    });
+
     if (text.isNotEmpty || attachments.isNotEmpty) {
       String conversationId = widget.conversation.id!;
       String myUserId = widget.myUser.id!;
@@ -492,8 +693,48 @@ class _BodyState extends State<Body> {
             'messageLast': messageLast.toMap()
           },
       );
-      _messageController.clear();
     }
+  }
+
+  Widget _attachedFiles(){
+    if(pickingFiles.isEmpty) {
+      return Container();
+    }
+    return GridView.count(
+      mainAxisSpacing: 5.0,
+      crossAxisSpacing: 5.0,
+      shrinkWrap: true,
+      crossAxisCount: 3,
+      children: List.generate(
+        pickingFiles.length,
+            (i) {
+          return Container(
+            width: 100, height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              color: Colors.grey[200],
+              border: Border.all(color: myGreen, width: 2),
+            ),
+            child: Stack(
+              children: [
+                if(pickingFileThumbnails[i] !=null) Image.memory(pickingFileThumbnails[i]!),
+                if(pickingFileThumbnails[i] ==null) Image.file(pickingFiles[i]),
+                Positioned(top: 0, right: 0,
+                  child: IconButton(
+                  icon: const Icon(Icons.close_outlined),
+                  onPressed: () {
+                    setState(() {
+                      pickingFiles.removeAt(i);
+                      pickingFileThumbnails.removeAt(i);
+                    });
+                  },
+                ),
+                ),
+              ]),
+          );
+        },
+      ),
+    );
   }
 
   Widget _chatInputFieldWidget() {
@@ -538,47 +779,52 @@ class _BodyState extends State<Body> {
                 color: kPrimaryColor.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(40),
               ),
-              child: Row(
+              child: Column(
                 children: [
-                  Icon(
-                    Icons.sentiment_satisfied_alt_outlined,
-                    color: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.color
-                        ?.withOpacity(0.64),
-                  ),
-                  const SizedBox(width: kDefaultPadding / 4),
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: "Type message",
-                        border: InputBorder.none,
-                      ),
-                      autocorrect: false,
-                      //onEditingComplete: _node.nextFocus,
+                  _attachedFiles(),
+                  Row(
+                  children: [
+                    Icon(
+                      Icons.sentiment_satisfied_alt_outlined,
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.color
+                          ?.withOpacity(0.64),
                     ),
-                  ),
-                  Icon(
-                    Icons.attach_file,
-                    color: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.color
-                        ?.withOpacity(0.64),
-                  ),
-                  const SizedBox(width: kDefaultPadding / 4),
-                  Icon(
-                    Icons.camera_alt_outlined,
-                    color: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        ?.color
-                        ?.withOpacity(0.64),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: kDefaultPadding / 4),
+                    Expanded(
+                      child: TextField(
+                        focusNode: _focusNode,
+                        controller: _messageController,
+                        decoration: const InputDecoration(
+                          hintText: "Type message",
+                          border: InputBorder.none,
+                        ),
+                        autocorrect: false,
+                        //onEditingComplete: _node.nextFocus,
+                      ),
+                    ),
+                    Icon(
+                      Icons.attach_file,
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.color
+                          ?.withOpacity(0.64),
+                    ),
+                    const SizedBox(width: kDefaultPadding / 4),
+                    Icon(
+                      Icons.camera_alt_outlined,
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          ?.color
+                          ?.withOpacity(0.64),
+                    ),
+                  ],
+                ),
+                ]),
             )),
             const SizedBox(width: kDefaultPadding),
             IconButton(
@@ -598,7 +844,7 @@ class _BodyState extends State<Body> {
       automaticallyImplyLeading: false,
       title: Row(
         children: [
-          const BackButton(),
+          BackButton(color: Theme.of(context).textTheme.bodyText1?.color),
           _photo(widget.conversation),
           const SizedBox(width: kDefaultPadding * 0.75),
           Column(
@@ -616,11 +862,11 @@ class _BodyState extends State<Body> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.local_phone),
+          icon: Icon(Icons.local_phone, color: Theme.of(context).textTheme.bodyText1?.color,),
           onPressed: () {},
         ),
         IconButton(
-          icon: const Icon(Icons.more_vert),
+          icon: Icon(Icons.more_vert, color: Theme.of(context).textTheme.bodyText1?.color,),
           onPressed: () {},
         ),
         const SizedBox(width: kDefaultPadding / 2),
@@ -675,7 +921,7 @@ class _BodyState extends State<Body> {
             //TODO: input
             _chatInputFieldWidget(),
           ]),
-          //TODO: add files
+          //TODO: add pickingFiles
           _showBottom
               ? Stack(children: [
                   Positioned.fill(
@@ -722,7 +968,26 @@ class _BodyState extends State<Body> {
                                   icons[i],
                                   color: myGreen,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  setState(() {
+                                    _showBottom = false;
+                                  });
+                                  if(i==0){
+                                    _getImageGallery();
+                                  }
+                                  if(i==1){
+                                    _getImageCamera();
+                                  }
+                                  if(i==2){
+                                    _getVideoGallery();
+                                  }
+                                  if(i==3){
+                                    _getVideoCamera();
+                                  }
+                                  if(i==4){
+                                    _getFiles();
+                                  }
+                                },
                               ),
                             );
                           },
@@ -741,8 +1006,9 @@ class _BodyState extends State<Body> {
 List<IconData> icons = [
   Icons.image,
   Icons.camera,
-  Icons.file_upload,
-  Icons.folder,
+  Icons.video_collection,
+  Icons.video_call,
+  Icons.attachment,
   Icons.gif
 ];
 

@@ -347,7 +347,7 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
     zoomIconWhenRelease = Tween(begin: 1.8, end: 0.0).animate(CurvedAnimation(
         parent: animControlIconWhenRelease, curve: Curves.decelerate));
 
-    moveUpIconWhenRelease = Tween(begin: 180.0, end: 0.0).animate(
+    moveUpIconWhenRelease = Tween(begin: 180.0, end: 50.0).animate(
         CurvedAnimation(
             parent: animControlIconWhenRelease, curve: Curves.decelerate));
 
@@ -1903,7 +1903,7 @@ class _CommentItemState extends State<CommentItem> with TickerProviderStateMixin
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width-123,
-                      height: 200,
+                      height: 160,
                       child: GestureDetector(
                     child: Column(
                         children:[

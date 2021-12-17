@@ -6,6 +6,7 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:working_project/services/database_service.dart';
 import 'app/home/member/posts/posts_page.dart';
+import 'app/home/messages/messages_page.dart';
 import 'app/welcome/welcome_page.dart';
 import 'locale_service.dart';
 import 'models/my_user.dart';
@@ -18,6 +19,7 @@ import 'app/auth_widget.dart';
 import 'app/home/home_page_widget.dart';
 import 'app/sign_in/sign_in_page.dart';
 import 'app/welcome/welcome_view_model.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 
 //TODO: Phát triển mạng xã hội shipper
 //TODO: -d chrome --web-hostname localhost --web-port 6969
@@ -26,6 +28,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   print('init firebase');
   await Firebase.initializeApp();
+  await FirebaseAppCheck.instance.activate(
+    webRecaptchaSiteKey: '6Ld49KsdAAAAADxE7yyU192iE4KH1doic2u7vIju',
+  );
   //TODO: init ProviderScope de xai cac providers
   print('runApp ProviderScope');
   runApp(ProviderScope(
@@ -148,7 +153,7 @@ class TestPage extends StatelessWidget {
               ],
             ),
 
-            body: PostsPage(myUser: myUser),
+            body: MessagesPage(myUser: myUser, conversationId: '1HBfVQwh2U93b0WO0pgU',),
           );
         }
         return Center(child: Text('TestPage Loading...'));

@@ -79,10 +79,18 @@ class FeedBackAttachments extends StatelessWidget {
     if (attachment.type == 'IMAGE') {
       return _imageItem(attachment.thumbURL, onTap: () {
         print('tap IMAGE');
+
       });
     }
     if (attachment.type == 'VIDEO') {
-      return VideoPlayerBox(myUser: myUser, attachment: attachment);
+      return VideoPlayerBox(
+        //myUser: myUser,
+        attachment: attachment,
+        onDoubleTap: (){
+          print('onDoubleTap VIDEO');
+
+        },
+      );
     }
     if (attachment.type == 'GIF') {
       return _imageItem(attachment.thumbURL, onTap: () {

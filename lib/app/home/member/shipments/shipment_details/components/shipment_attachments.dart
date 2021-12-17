@@ -83,7 +83,9 @@ class ShipmentAttachments extends StatelessWidget {
       });
     }
     if (attachment.type == 'VIDEO') {
-      return VideoPlayerBox(myUser: myUser, attachment: attachment);
+      return VideoPlayerBox(
+          //myUser: myUser,
+          attachment: attachment);
     }
     if (attachment.type == 'GIF') {
       return _imageItem(attachment.thumbURL, onTap: () {

@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '/models/attachment.dart';
-import '/models/my_user.dart';
+//import '/models/my_user.dart';
 
 const String defaultThumbURL =
     'https://i0.wp.com/media.discordapp.net/attachments/781870041862897684/784806733431701514/EIB7R00XUAAwQ6a.png';
 
 class VideoPlayerBox extends StatefulWidget {
   const VideoPlayerBox(
-      {Key? key, required this.myUser, required this.attachment})
+      {Key? key,
+        //required this.myUser,
+        required this.attachment, this.onDoubleTap})
       : super(key: key);
 
-  final MyUser myUser;
+  //final MyUser myUser;
   final Attachment attachment;
+  final VoidCallback? onDoubleTap;
 
   @override
   _VideoPlayerBoxState createState() => _VideoPlayerBoxState();
@@ -94,20 +97,23 @@ class _VideoPlayerBoxState extends State<VideoPlayerBox> {
                       _showControllerButtons = !_showControllerButtons;
                     });
                   },
+                  onDoubleTap: widget.onDoubleTap,
                   child: Container(color: Colors.transparent),
                 ),
                 //TODO: controller buttons
                 if (_showControllerButtons) _controllerButtons(),
               ]));
         } else {
-          return Stack(children: [
+          return Stack(
+            alignment: AlignmentDirectional.center,
+              children: [
             FadeInImage.assetNetwork(
               alignment: Alignment.topCenter,
               placeholder: 'assets/images/video_place_here.png',
               image: widget.attachment.thumbURL ?? defaultThumbURL,
               fit: BoxFit.fill,
             ),
-            const Center(child: CircularProgressIndicator()),
+            const CircularProgressIndicator(),
           ]);
         }
       },
