@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 const String defaultPhotoURL =
-    'https://scontent.fdad1-2.fna.fbcdn.net/v/t1.30497-1/p100x100/143086968_2856368904622192_1959732218791162458_n.png?_nc_cat=1&ccb=1-5&_nc_sid=7206a8&_nc_ohc=xxuCSnWhe_UAX9Uml8x&tn=ydMBgSqsmF5ZJOjR&_nc_ht=scontent.fdad1-2.fna&oh=00f1644507795114064f220c2267cfb1&oe=61AD6051';
+    'https://yt3.ggpht.com/yti/APfAmoEUl_jqsKc0uhb1z2aakEsBQ7ISQllbZgOgA7lc=s88-c-k-c0x00ffffff-no-rj-mo';
 
 class Avatar extends StatelessWidget {
   const Avatar({

@@ -81,7 +81,7 @@ class MessageAttachments extends StatelessWidget {
 
   Widget _item(BuildContext context, Attachment attachment) {
     if (attachment.type == 'IMAGE') {
-      return _imageItem(attachment.thumbURL, onTap: () {
+      return _imageItem(attachment.thumbURL??attachment.fileURL, onTap: () {
         print('tap IMAGE');
         _showFullFileViewPage(context, attachment);
       });
@@ -109,7 +109,7 @@ class MessageAttachments extends StatelessWidget {
         print('tap FILE');
       });
     }
-    return _imageItem(attachment.thumbURL, onTap: () {
+    return _imageItem(attachment.thumbURL??attachment.fileURL, onTap: () {
       print('tap FILE');
     });
   }

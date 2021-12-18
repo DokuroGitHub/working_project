@@ -59,12 +59,10 @@ class _BodyState extends State<Body> {
     if (pickedFile != null) {
       File file = File(pickedFile.path);
       final thumbnail = await _filePathToThumbnails(file);
-      if(thumbnail!=null) {
-        setState(() {
-          pickingFiles.add(file);
-          pickingFileThumbnails.add(thumbnail);
-        });
-      }
+      setState(() {
+        pickingFiles.add(file);
+        pickingFileThumbnails.add(thumbnail);
+      });
     }
   }
 
@@ -76,12 +74,10 @@ class _BodyState extends State<Body> {
     if (pickedFile != null) {
       File file = File(pickedFile.path);
       final thumbnail = await _filePathToThumbnails(file);
-      if(thumbnail!=null) {
-        setState(() {
-          pickingFiles.add(file);
-          pickingFileThumbnails.add(thumbnail);
-        });
-      }
+      setState(() {
+        pickingFiles.add(file);
+        pickingFileThumbnails.add(thumbnail);
+      });
     }
   }
 
@@ -93,12 +89,10 @@ class _BodyState extends State<Body> {
     if (pickedFile != null) {
       File file = File(pickedFile.path);
       final thumbnail = await _filePathToThumbnails(file);
-      if(thumbnail!=null) {
-        setState(() {
-          pickingFiles.add(file);
-          pickingFileThumbnails.add(thumbnail);
-        });
-      }
+      setState(() {
+        pickingFiles.add(file);
+        pickingFileThumbnails.add(thumbnail);
+      });
     }
   }
 
@@ -110,12 +104,10 @@ class _BodyState extends State<Body> {
     if (pickedFile != null) {
       File file = File(pickedFile.path);
       final thumbnail = await _filePathToThumbnails(file);
-      if(thumbnail!=null) {
-        setState(() {
-          pickingFiles.add(file);
-          pickingFileThumbnails.add(thumbnail);
-        });
-      }
+      setState(() {
+        pickingFiles.add(file);
+        pickingFileThumbnails.add(thumbnail);
+      });
     }
   }
 
@@ -127,12 +119,10 @@ class _BodyState extends State<Body> {
       for(int i = 0;i<files.length;i++){
         File file = File(files[i].path);
         final thumbnail = await _filePathToThumbnails(file);
-        if(thumbnail!=null) {
-          setState(() {
-            pickingFiles.add(file);
-            pickingFileThumbnails.add(thumbnail);
-          });
-        }
+        setState(() {
+          pickingFiles.add(file);
+          pickingFileThumbnails.add(thumbnail);
+        });
       }
     } else {
       // User canceled the picker
@@ -616,7 +606,7 @@ class _BodyState extends State<Body> {
         //quality: 25,
       );
     }
-
+    return null;
   }
 
   String _filePathToType(String filePath){
@@ -717,11 +707,11 @@ class _BodyState extends State<Body> {
             ),
             child: Stack(
               children: [
-                if(pickingFileThumbnails[i] !=null) Image.memory(pickingFileThumbnails[i]!),
-                if(pickingFileThumbnails[i] ==null) Image.file(pickingFiles[i]),
-                Positioned(top: 0, right: 0,
+                if(pickingFileThumbnails[i] !=null) Center(child: Image.memory(pickingFileThumbnails[i]!)),
+                if(pickingFileThumbnails[i] ==null) Center(child: Image.file(pickingFiles[i])),
+                Positioned(top: -10, right: -10,
                   child: IconButton(
-                  icon: const Icon(Icons.close_outlined),
+                  icon: const Icon(Icons.close_rounded),
                   onPressed: () {
                     setState(() {
                       pickingFiles.removeAt(i);

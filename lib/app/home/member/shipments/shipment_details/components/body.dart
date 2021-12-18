@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:working_project/app/home/messages/messages_page.dart';
+import 'package:working_project/services/message_service.dart';
 
 import '/app/home/account/account_page.dart';
 
@@ -67,9 +68,9 @@ class _BodyState extends State<Body> {
   AppBar buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: Row(children: const [
-        BackButton(),
-        Text('Thông tin chi tiết'),
+      title: Row(children: [
+        BackButton(color: Theme.of(context).textTheme.bodyText1?.color),
+        const Text('Thông tin chi tiết'),
       ]),
       actions: [
         IconButton(
@@ -495,6 +496,24 @@ class _BodyState extends State<Body> {
         ),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      print('sending email');
+      String? winnerEmail;
+      List<String> loserEmails = [];
+      for(int i=0;i<widget.shipment.shippersEnrolled.length;i++){
+        MyUser? myUser = await DatabaseService().getMyUserByDocumentId(widget.shipment.shippersEnrolled[i]);
+        String? email = myUser?.email;
+        if(email!=null) {
+          if(myUser!.id! == shipperId){
+            winnerEmail = email;
+          }else {
+            loserEmails.add(email);
+          }
+        }
+      }
+      //TODO: send mail
+      MessageService().sendMail(winnerEmail: winnerEmail, loserEmails: loserEmails);
+
     } catch (e) {
       unawaited(showDialog(
         context: context,
@@ -663,13 +682,13 @@ class _BodyState extends State<Body> {
                 borderRadius: BorderRadius.circular(20.0)),
             leading: _circleAvatar(photoURL: myUser.photoURL),
             title: Row(mainAxisSize: MainAxisSize.min, children: [
-              Text(myUser.name ?? ''),
-              const SizedBox(width: 10),
+              Text(myUser.name ?? '', overflow: TextOverflow.ellipsis,),
+              const SizedBox(width: 5),
               _rating(context, offer.createdBy),
             ]),
             subtitle: Text(myUser.phoneNumber ?? ''),
             trailing: SizedBox(
-              width: MediaQuery.of(context).size.width * .4,
+              width: MediaQuery.of(context).size.width * .35,
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,

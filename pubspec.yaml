@@ -49,6 +49,9 @@ dependencies:
   video_thumbnail: ^0.4.3
   fluttertoast: 8.0.6
   firebase_app_check: ^0.0.6+3
+  overlay_support:
+  firebase_analytics: ^9.0.4
+  mailer: ^5.0.2
 
 dev_dependencies:
   flutter_driver:
