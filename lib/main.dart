@@ -5,6 +5,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:working_project/app/home/finish_my_user_info/finish_my_user_info_page.dart';
+import 'package:working_project/services/auth_service.dart';
 import 'package:working_project/services/database_service.dart';
 import 'package:working_project/services/message_service.dart';
 import 'app/home/messages/messages_page.dart';
@@ -177,10 +179,10 @@ class _TestPageState extends State<TestPage> {
               ],
             ),
 
-            body: MessagesPage(myUser: myUser, conversationId: '1HBfVQwh2U93b0WO0pgU',),
+            body: FinishMyUserInfoPage(user: AuthService().getCurrentUser()!),
           );
         }
-        return Center(child: Text('TestPage Loading...'));
+        return const Center(child: Text('TestPage Loading...'));
       });
   }
 }

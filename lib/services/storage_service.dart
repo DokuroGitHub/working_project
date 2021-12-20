@@ -23,5 +23,15 @@ class StorageService {
     return uploadTask;
   }
 
+  UploadTask uploadFileInFeedBack({required File file, required String fileName, required String myUserId2, required String myUserId}) {
+    Reference reference = FirebaseStorage.instance.ref().child('my_user/$myUserId2/feedbacks/$myUserId/$fileName');
+    UploadTask uploadTask = reference.putFile(file);
+    return uploadTask;
+  }
+  UploadTask uploadDataInFeedBack({required Uint8List data, required String fileName, required String myUserId2, required String myUserId}) {
+    Reference reference = FirebaseStorage.instance.ref().child('my_user/$myUserId2/feedbacks/$myUserId/$fileName');
+    UploadTask uploadTask = reference.putData(data);
+    return uploadTask;
+  }
 
 }

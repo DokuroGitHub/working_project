@@ -169,6 +169,27 @@ class DatabaseService {
         .toList());
   }
 
+  //TODO: getMyUserByDocumentId
+  Future<FeedBack?> getFeedBackByDocumentId({required String myUserId, required String feedBackId}) {
+    return FirebaseFirestore.instance
+        .doc('my_user/$myUserId/feedbacks/$feedBackId')
+        .get()
+        .then((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return FeedBack.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+  //TODO: updateFeedBackOnDB, merge
+  Future<void> updateFeedBackOnDB({required String myUserId, required String feedBackId, required Map<String, dynamic> map}) async {
+    var ref = FirebaseFirestore.instance.doc('my_user/$myUserId/feedbacks/$feedBackId');
+    ref.set(map, SetOptions(merge: true)).whenComplete(() {
+      print('updated ${ref.path}');
+    });
+  }
+
   //TODO: ------------------- Post -----------------------------
   //TODO: addPost
   Future<String?> addPost(Map<String, dynamic> postMap) async {
@@ -212,6 +233,21 @@ class DatabaseService {
         .doc('post/$documentId')
         .snapshots()
         .map((snapshot) {
+      if (!snapshot.exists) {
+        print('post/$documentId not exists');
+        return null;
+      }
+      return Post.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
+  //TODO: getPostByDocumentId
+  Future<Post?> getPostByDocumentId(String documentId) {
+    return FirebaseFirestore.instance
+        .collection('post')
+        .doc(documentId)
+        .get()
+        .then((snapshot) {
       if (!snapshot.exists) {
         print('post/$documentId not exists');
         return null;
@@ -459,6 +495,41 @@ class DatabaseService {
     });
   }
 
+  //TODO: updatePostReported, merge
+  Future<void> updatePostReported(String documentId, Map<String, dynamic> map) async {
+    var ref = FirebaseFirestore.instance.collection('post_reported').doc(documentId);
+    ref.set(map, SetOptions(merge: true)).whenComplete(() {
+      print('updated ${ref.path}');
+    });
+  }
+
+  //TODO: getStreamListPostReportedBySomePart
+  Stream<List<PostReported>> getStreamListPostReportedBySomePart(
+      String field, String searchKey) {
+    return FirebaseFirestore.instance
+        .collection('post_reported')
+        .where(field, isGreaterThanOrEqualTo: searchKey)
+        .where(field, isLessThan: searchKey + 'z')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => PostReported.fromMap(doc.data(), doc.id))
+        .toList());
+  }
+
+  //TODO: getStreamPostReportedByDocumentId
+  Stream<PostReported?> getStreamPostReportedByDocumentId(String documentId) {
+    return FirebaseFirestore.instance
+        .doc('post_reported/$documentId')
+        .snapshots()
+        .map((snapshot) {
+      if (!snapshot.exists) {
+        print('post_reported/$documentId not exists');
+        return null;
+      }
+      return PostReported.fromMap(snapshot.data(), snapshot.id);
+    });
+  }
+
   //TODO: ------------------- Shipment -----------------------------
   //TODO: addShipment
   Future<String?> addShipment(Map<String, dynamic> shipmentMap) async {
@@ -503,6 +574,20 @@ class DatabaseService {
         (snapshot) => snapshot.docs
             .map((doc) => Shipment.fromMap(doc.data(), doc.id))
             .toList());
+  }
+
+  //TODO: getShipmentByDocumentId
+  Future<Shipment?> getShipmentByDocumentId(String documentId) {
+    return FirebaseFirestore.instance
+        .collection('shipment')
+        .doc(documentId)
+        .get()
+        .then((snapshot) {
+      if (!snapshot.exists) {
+        return null;
+      }
+      return Shipment.fromMap(snapshot.data(), snapshot.id);
+    });
   }
 
   //TODO: ------------------- Offer -----------------------------

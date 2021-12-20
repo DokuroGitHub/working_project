@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:working_project/app/home/account/account_page.dart';
+import 'package:working_project/app/home/admin/my_users/my_user_details_page.dart';
+import 'package:working_project/app/home/admin/post_reports/post_reported_details_page.dart';
+import 'package:working_project/app/home/member/posts/post_details_page.dart';
 import 'package:working_project/app/home/member/shipments/edit_shipment/edit_shipment_page.dart';
 import 'package:working_project/common_widgets/full_file_view_page.dart';
 import 'package:working_project/models/attachment.dart';
+import 'package:working_project/models/post_reported.dart';
 import 'package:working_project/models/shipment.dart';
 import '/app/home/feedbacks/feedbacks_page.dart';
 import '/app/home/member/posts/edit_post_page.dart';
@@ -24,6 +28,11 @@ class AppRoutes {
   static const feedbacksPage = '/feedbacks-page';
   static const accountPage = '/account-page';
   static const fullFileViewPage = '/full-file-view-page';
+  static const postDetailsPage = '/post-details-page';
+
+  //TODO: admin pages
+  static const myUserDetailsPage = '/my-user-details-page';
+  static const postReportDetailsPage = '/post-report-details-page';
 }
 
 class AppRouter {
@@ -113,6 +122,36 @@ class AppRouter {
         final attachment = mapArgs['attachment'] as Attachment;
         return MaterialPageRoute<dynamic>(
           builder: (_) => FullFileViewPage(attachment: attachment),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+    //TODO: postReportDetailsPage
+      case AppRoutes.postReportDetailsPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final myUser = mapArgs['myUser'] as MyUser;
+        final postReported = mapArgs['postReported'] as PostReported;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => PostReportedDetailsPage(myUser: myUser, postReported: postReported),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+    //TODO: postReportDetailsPage
+      case AppRoutes.myUserDetailsPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final myUser = mapArgs['myUser'] as MyUser;
+        final myUserId2 = mapArgs['myUserId2'] as String;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => MyUserDetailsPage(myUser: myUser, myUserId2: myUserId2),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+    //TODO: postReportDetailsPage
+      case AppRoutes.postDetailsPage:
+        final mapArgs = args as Map<String, dynamic>;
+        final myUser = mapArgs['myUser'] as MyUser;
+        final postId = mapArgs['postId'] as String;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => PostDetailsPage(myUser: myUser, postId: postId),
           settings: settings,
           fullscreenDialog: true,
         );

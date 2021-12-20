@@ -4,9 +4,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '/app/home/member/posts/posts_page.dart';
 import '/app/home/member/shipments/shipments_page.dart';
 import '/models/my_user.dart';
-import '../account/account_page.dart';
-import 'chats/chats_page.dart';
-import 'contacts/contacts_page.dart';
+import 'account/account_page.dart';
+import 'member/chats/chats_page.dart';
+import 'member/contacts/contacts_page.dart';
 
 class HomePageForMember extends StatefulWidget {
   const HomePageForMember({

@@ -10,7 +10,7 @@ import '/services/auth_service.dart';
 import '/services/database_service.dart';
 
 import 'finish_my_user_info/finish_my_user_info_page.dart';
-import 'member/home_page_for_member.dart';
+import 'home_page_for_member.dart';
 
 class HomePageWidget extends StatefulWidget {
 

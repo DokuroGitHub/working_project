@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:working_project/common_widgets/full_file_view_page.dart';
 import '/app/home/member/posts/components/video_player_box.dart';
 import '/models/attachment.dart';
 import '/models/my_user.dart';
@@ -15,10 +16,15 @@ class FeedBackAttachments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _listItems();
+    return _listItems(context);
   }
 
-  Row _row(int len, int rowN){
+  Future<void> _showFullFileViewPage(
+      BuildContext context, Attachment attachment) async {
+    await FullFileViewPage.showPlz(context: context, attachment: attachment);
+  }
+
+  Row _row(BuildContext context, int len, int rowN){
     List<Widget> itemsInRow = [];
     //TODO: co row chac chan nItem 1->maxColumn
     int nItem = maxColumn;
@@ -29,12 +35,12 @@ class FeedBackAttachments extends StatelessWidget {
     for(var i = 0; i < nItem; i++){
       int index = maxColumn*(rowN-1) + i;
       print('len: $len, rowN: $rowN, nItem: $nItem, index: $index');
-      itemsInRow.add(Expanded(child: _item(attachments[index])));
+      itemsInRow.add(Expanded(child: _item(context, attachments[index])));
     }
     return Row(children: itemsInRow);
   }
 
-  List<Widget> _rows(){
+  List<Widget> _rows(BuildContext context){
     int len = attachments.length;
     if(len==0){
       //TODO: len=0, 0 row
@@ -46,18 +52,18 @@ class FeedBackAttachments extends StatelessWidget {
     List<Widget> rows = [];
     //TODO: nROw
     for(var i = 1; i < nRow+1; i++){
-      rows.add(_row(len, i));
+      rows.add(_row(context, len, i));
     }
     return rows;
   }
 
-  Widget _listItems(){
+  Widget _listItems(BuildContext context){
     return Column(
       mainAxisSize: MainAxisSize.min,
-        children: _rows());
+        children: _rows(context));
   }
 
-  Widget _imageItem(String? thumbURL, {void Function()? onTap}) {
+  Widget _imageItem(BuildContext context, String? thumbURL, {void Function()? onTap}) {
     return GestureDetector(
         onTap: onTap,
         child: Card(
@@ -75,11 +81,11 @@ class FeedBackAttachments extends StatelessWidget {
     );
   }
 
-  Widget _item(Attachment attachment) {
+  Widget _item(BuildContext context, Attachment attachment) {
     if (attachment.type == 'IMAGE') {
-      return _imageItem(attachment.thumbURL, onTap: () {
+      return _imageItem(context, attachment.thumbURL??attachment.fileURL, onTap: () {
         print('tap IMAGE');
-
+        _showFullFileViewPage(context, attachment);
       });
     }
     if (attachment.type == 'VIDEO') {
@@ -93,17 +99,23 @@ class FeedBackAttachments extends StatelessWidget {
       );
     }
     if (attachment.type == 'GIF') {
-      return _imageItem(attachment.thumbURL, onTap: () {
-        print('tap GIF');
-      });
+      return VideoPlayerBox(
+        //myUser: myUser,
+        attachment: attachment,
+        onDoubleTap: () {
+          _showFullFileViewPage(context, attachment);
+        },
+      );
     }
     if (attachment.type == 'FILE') {
-      return _imageItem(attachment.thumbURL, onTap: () {
+      return _imageItem(context, attachment.thumbURL??attachment.fileURL, onTap: () {
         print('tap FILE');
+        _showFullFileViewPage(context, attachment);
       });
     }
-    return _imageItem(attachment.thumbURL, onTap: () {
+    return _imageItem(context, attachment.thumbURL??attachment.fileURL, onTap: () {
       print('tap FILE');
+      _showFullFileViewPage(context, attachment);
     });
   }
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:working_project/app/home/admin/post_reports/post_reports_page.dart';
 
+import '/app/home/member/posts/posts_page.dart';
+import '/app/home/member/shipments/shipments_page.dart';
 import '/models/my_user.dart';
 import 'account/account_page.dart';
+import 'admin/my_users/my_users_page.dart';
 import 'member/chats/chats_page.dart';
 import 'member/contacts/contacts_page.dart';
-import 'member/posts/posts_page.dart';
-import 'member/shipments/shipments_page.dart';
 
 class HomePageForAdmin extends StatefulWidget {
   const HomePageForAdmin({
@@ -16,7 +18,7 @@ class HomePageForAdmin extends StatefulWidget {
   final MyUser myUser;
 
   @override
-  _HomePageForAdminState createState() => _HomePageForAdminState();
+  createState() => _HomePageForAdminState();
 }
 
 class _HomePageForAdminState extends State<HomePageForAdmin> {
@@ -44,21 +46,15 @@ class _HomePageForAdminState extends State<HomePageForAdmin> {
               tooltip: 'Posts here',
               label: AppLocalizations.of(context)!.posts,
               backgroundColor: Colors.green),
-          BottomNavigationBarItem(
-              icon: const Icon(Icons.delivery_dining),
-              tooltip: 'Shipments here',
-              label: AppLocalizations.of(context)!.shipments,
-              backgroundColor: Colors.yellow),
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.report),
+              tooltip: 'Post Reports here',
+              label: 'Post Reports',
+              backgroundColor: Colors.green),
           BottomNavigationBarItem(
             icon: const Icon(Icons.contacts),
             tooltip: 'Contacts here',
             label: AppLocalizations.of(context)!.contacts,
-            backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.chat),
-            tooltip: 'Chats here',
-            label: AppLocalizations.of(context)!.chats,
             backgroundColor: Colors.blue,
           ),
           BottomNavigationBarItem(
@@ -90,12 +86,10 @@ class _HomePageForAdminState extends State<HomePageForAdmin> {
       //TODO: page 0
       PostsPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 1
-      ShipmentsPage(myUser: widget.myUser, controller: _controller),
+      PostReportsPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 2
-      ContactsPage(myUser: widget.myUser, controller: _controller),
+      MyUsersPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 3
-      ChatsPage(myUser: widget.myUser, controller: _controller),
-      //TODO: page 4
       AccountPage(myUser: widget.myUser, myUserId2: widget.myUser.id!, controller: _controller,),
     ];
 

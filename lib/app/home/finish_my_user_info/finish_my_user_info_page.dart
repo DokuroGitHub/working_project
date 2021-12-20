@@ -30,6 +30,7 @@ class _FinishMyUserInfoPageState extends State<FinishMyUserInfoPage> {
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _selfIntroductionController = TextEditingController();
+  String _role = 'MEMBER';
 
   //TODO: _signOut
   Future<void> _signOut(BuildContext context) async {
@@ -100,7 +101,7 @@ class _FinishMyUserInfoPageState extends State<FinishMyUserInfoPage> {
         name: _nameController.text,
         phoneNumber: widget.user.phoneNumber,
         photoURL: widget.user.photoURL,
-        role:'MEMBER',
+        role: _role,
         selfIntroduction: _selfIntroductionController.text,
         shipperInfo: null,
       );
@@ -245,6 +246,8 @@ class _FinishMyUserInfoPageState extends State<FinishMyUserInfoPage> {
           const SizedBox(height: 8.0),
           _buildSelfIntroductionField(),
           const SizedBox(height: 8.0),
+          _buildRoleField(),
+          const SizedBox(height: 8.0),
           ElevatedButton(
             child: const Text('Xác nhận'),
             onPressed: (){
@@ -388,6 +391,37 @@ class _FinishMyUserInfoPageState extends State<FinishMyUserInfoPage> {
       keyboardType: TextInputType.text,
       keyboardAppearance: Brightness.light,
       onEditingComplete: _node.nextFocus,
+    );
+  }
+
+  Widget _buildRoleField() {
+    return Column(
+      children: <Widget>[
+        //TODO:
+        Row(children: const [Text('Vai trò'), Spacer()]),
+        //TODO: MEMBER
+        RadioListTile<String>(
+          title: const Text('Người dùng'),
+          value: 'MEMBER',
+          groupValue: _role,
+          onChanged: (value) {
+            setState(() {
+              _role = value!;
+            });
+          },
+        ),
+        //TODO: SHIPPER
+        RadioListTile<String>(
+          title: const Text('Shipper'),
+          value: 'SHIPPER',
+          groupValue: _role,
+          onChanged: (value) {
+            setState(() {
+              _role = value!;
+            });
+          },
+        ),
+      ],
     );
   }
 

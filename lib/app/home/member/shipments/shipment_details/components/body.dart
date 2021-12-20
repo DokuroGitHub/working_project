@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:working_project/app/home/feedbacks/feedbacks_page.dart';
+import 'package:working_project/app/home/member/posts/post_details_page.dart';
 import 'package:working_project/app/home/messages/messages_page.dart';
 import 'package:working_project/services/message_service.dart';
 
@@ -75,11 +77,21 @@ class _BodyState extends State<Body> {
       actions: [
         IconButton(
           icon: const Icon(Icons.local_phone),
+          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           onPressed: () {},
         ),
         IconButton(
           icon: const Icon(Icons.more_vert),
+          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           onPressed: () {},
+        ),
+        IconButton(
+          icon: const Icon(Icons.lightbulb),
+          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+          onPressed: () {
+            //TODO: xu ly report
+            _showActions(context);
+          },
         ),
         const SizedBox(width: kDefaultPadding / 2),
       ],
@@ -353,7 +365,7 @@ class _BodyState extends State<Body> {
     );
   }
 
-  Widget _postId() {
+  Widget _postId(BuildContext context) {
     if (widget.shipment.postId == null) {
       return Container();
     }
@@ -366,6 +378,20 @@ class _BodyState extends State<Body> {
         onTap: () {
           //TODO: open post
           print('shipment_details, click postId: ${widget.shipment.postId}');
+          String? postId = widget.shipment.postId;
+          if(postId!=null) {
+            PostDetailsPage.showPlz(context, widget.myUser, postId);
+          }else{
+            final snackBar = SnackBar(
+              content: const Text('Không tìm thấy bài viết !'),
+              action: SnackBarAction(
+                label: 'Ok',
+                onPressed: () {
+                },
+              ),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
         },
         child: Container(
           child: Text(widget.shipment.postId!),
@@ -760,6 +786,85 @@ class _BodyState extends State<Body> {
     ]);
   }
 
+
+  Future<void> _changeShipmentStatus() async {
+    Shipment? shipment = await DatabaseService().getShipmentByDocumentId(widget.shipment.id!);
+    if(shipment!=null){
+      if(shipment.status == 'SHIPPERDANGGIAO'){
+        shipment.status = 'DAXONG';
+      }else{
+        shipment.status = 'SHIPPERDANGGIAO';
+      }
+      await DatabaseService().updateShipment(shipment.id!, shipment.toMap());
+    }
+  }
+
+  Future<void> _sendFeedback(BuildContext context) async {
+    Shipment? shipment = await DatabaseService().getShipmentByDocumentId(widget.shipment.id!);
+    if(shipment!=null){
+      String? shipperId = shipment.shipperId;
+      if(shipperId!=null) {
+        if(widget.myUser.id! == shipment.createdBy) {
+          //TODO: đánh giá shipper
+          FeedBacksPage.showPlz(context, widget.myUser, shipperId);
+        }
+        if(widget.myUser.id! == shipperId) {
+          //TODO: đánh giá chủ shipment
+          FeedBacksPage.showPlz(context, widget.myUser, shipment.createdBy);
+        }
+      }else{
+        const snackBar = SnackBar(content: Text('Shippment chưa được giao cho shipper nào'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+  }
+
+  //TODO: _showActions
+  Future<void> _showActions(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context2) => AlertDialog(
+        title: const Text('Chọn thao tác'),
+        content: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * .8),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            _changeShipmentStatus();
+                          },
+                          child: const Text('Thay đổi trạng thái shipment')),
+                    ),
+                    const Spacer(),
+                  ]),
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            _sendFeedback(context);
+                          },
+                          child: const Text('Gửi feedback')),
+                    ),
+                    const Spacer(),
+                  ]),
+                ]),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -798,7 +903,7 @@ class _BodyState extends State<Body> {
                 _parcel(),
                 const SizedBox(height: 10),
                 //TODO: postId
-                _postId(),
+                _postId(context),
                 const SizedBox(height: 10),
                 //TODO: service
                 _service(),

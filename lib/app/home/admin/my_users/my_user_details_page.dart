@@ -11,69 +11,19 @@ import 'package:working_project/common_widgets/helper.dart';
 import 'package:working_project/constants/strings.dart';
 import 'package:working_project/models/feedback.dart';
 import 'package:working_project/models/my_user.dart';
-import 'package:working_project/services/auth_service.dart';
 import 'package:working_project/services/database_service.dart';
 
-import '../../../../locale_service.dart';
-import '../../../../theme_service.dart';
-
-class Body extends StatefulWidget {
-  const Body({required this.myUser, required this.myUser2, this.controller});
+class MyUserDetailsPage extends StatefulWidget {
+  const MyUserDetailsPage({required this.myUser, required this.myUserId2});
 
   final MyUser myUser;
-  final MyUser myUser2;
-  final ScrollController? controller;
+  final String myUserId2;
 
   @override
   _BodyState createState() => _BodyState();
 }
 
-class _BodyState extends State<Body> {
-
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      await AuthService().signOut();
-    } catch (e) {
-      //TODO: show dialog
-      unawaited(showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(AppLocalizations.of(context)!.logoutFailed),
-          content: Text(AppLocalizations.of(context)!.logoutFailed),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text(AppLocalizations.of(context)!.ok),
-              onPressed: () => Navigator.of(context).pop(true),
-            ),
-          ],
-        ),
-      ));
-    }
-  }
-
-  Future<void> _confirmSignOut(BuildContext context) async {
-    final bool didRequestSignOut = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.logout),
-        content: Text(AppLocalizations.of(context)!.logoutAreYouSure),
-        actions: <Widget>[
-          ElevatedButton(
-            child: Text(AppLocalizations.of(context)!.cancel),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          ElevatedButton(
-            child: Text(AppLocalizations.of(context)!.ok),
-            onPressed: () => Navigator.of(context).pop(true),
-          ),
-        ],
-      ),
-    ) ??
-        false;
-    if (didRequestSignOut == true) {
-      await _signOut(context);
-    }
-  }
+class _BodyState extends State<MyUserDetailsPage> {
 
   Widget _buildUserInfo(MyUser user) {
     return Column(
@@ -99,73 +49,34 @@ class _BodyState extends State<Body> {
     );
   }
 
-  AppBar buildAppBar() {
+  AppBar buildAppBar(MyUser myUser) {
     return AppBar(
       title: const Text(Strings.accountPage),
       actions: <Widget>[
-        if (widget.myUser2.id! == widget.myUser.id!)
-          Row(children: [
-            IconButton(
-              icon: const Icon(Icons.lightbulb),
-              color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-              onPressed: ThemeService().switchTheme,
-            ),
-            PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert,
-                color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-              ),
-              onSelected: LocaleService().changeLocale,
-              itemBuilder: (BuildContext context) {
-                return [
-                  PopupMenuItem<String>(
-                    value: 'vi',
-                    child: Text('Tiếng Việt',
-                        style: TextStyle(
-                            color: LocaleService().languageCode == 'vi'
-                                ? Colors.red
-                                : Colors.blue)),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'en',
-                    child: Text('English',
-                        style: TextStyle(
-                            color: LocaleService().languageCode == 'en'
-                                ? Colors.red
-                                : Colors.blue)),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'es',
-                    child: Text('Espanol',
-                        style: TextStyle(
-                            color: LocaleService().languageCode == 'es'
-                                ? Colors.red
-                                : Colors.blue)),
-                  ),
-                ];
-              },
-            ),
-            const SizedBox(width: 10),
-            TextButton(
-              child: Text(AppLocalizations.of(context)!.logout,style: Theme.of(context).textTheme.bodyText1),
-              onPressed: () => _confirmSignOut(context),
-            ),
-          ]),
+        IconButton(
+          icon: const Icon(Icons.lightbulb),
+          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+          onPressed: () {
+            //TODO: xu ly
+            _showActions(context);
+          },
+        ),
       ],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(100.0),
-        child: _buildUserInfo(widget.myUser2),
+        child: _buildUserInfo(myUser),
       ),
     );
   }
 
-  Widget _address() {
-    if (widget.myUser2.address == null) {
+  Widget _address(MyUser myUser) {
+    if (myUser.address == null) {
       return Container();
     }
-    String? details = widget.myUser2.address!.details;
-    String? city = widget.myUser2.address!.city;
-    String? district = widget.myUser2.address!.district;
-    String? street = widget.myUser2.address!.street;
+    String? details = myUser.address!.details;
+    String? city = myUser.address!.city;
+    String? district = myUser.address!.district;
+    String? street = myUser.address!.street;
     String address = '';
     if (details != null) {
       address = details;
@@ -185,38 +96,38 @@ class _BodyState extends State<Body> {
     ]);
   }
 
-  Widget _birthDate() {
-    if (widget.myUser2.birthDate == null) {
+  Widget _birthDate(MyUser myUser) {
+    if (myUser.birthDate == null) {
       return Container();
     }
     return Row(children: [
       const Icon(Icons.date_range_outlined),
       const SizedBox(width: 10),
-      Text('Ngày sinh: ${widget.myUser2.birthDate!.toString()}'),
+      Text('Ngày sinh: ${myUser.birthDate!.toString()}'),
     ]);
   }
 
-  Widget _createdAt() {
+  Widget _createdAt(MyUser myUser) {
     return Row(children: [
       const Icon(Icons.date_range_outlined),
       const SizedBox(width: 10),
-      Text('Tham gia lúc: ${widget.myUser2.createdAt.toString()}'),
+      Text('Tham gia lúc: ${myUser.createdAt.toString()}'),
     ]);
   }
 
-  Widget _email() {
-    if (widget.myUser2.email == null) {
+  Widget _email(MyUser myUser) {
+    if (myUser.email == null) {
       return Container();
     }
     return Row(children: [
       const Icon(Icons.mail_outline_outlined),
       const SizedBox(width: 10),
-      Text('Email: ${widget.myUser2.email!}'),
+      Text('Email: ${myUser.email!}'),
     ]);
   }
 
-  Widget _isActive() {
-    if (widget.myUser2.isActive) {
+  Widget _isActive(MyUser myUser) {
+    if (myUser.isActive) {
       return Row(children: const [
         Icon(Icons.online_prediction_outlined),
         SizedBox(width: 10),
@@ -224,7 +135,7 @@ class _BodyState extends State<Body> {
       ]);
     }
     String text =
-        'Online: Hoạt động cách đây ${Helper.timeToString(widget.myUser2.lastSignInAt).toString()}';
+        'Online: Hoạt động cách đây ${Helper.timeToString(myUser.lastSignInAt).toString()}';
     return Row(children: [
       const Icon(Icons.online_prediction_outlined),
       const SizedBox(width: 10),
@@ -232,8 +143,8 @@ class _BodyState extends State<Body> {
     ]);
   }
 
-  Widget _isBlock() {
-    if (widget.myUser2.isBlocked) {
+  Widget _isBlock(MyUser myUser) {
+    if (myUser.isBlocked) {
       return Row(children: const [
         Icon(Icons.block_outlined),
         SizedBox(width: 10),
@@ -247,30 +158,30 @@ class _BodyState extends State<Body> {
     ]);
   }
 
-  Widget _lastSignInAt() {
+  Widget _lastSignInAt(MyUser myUser) {
     return Row(children: [
       const Icon(Icons.date_range_outlined),
       const SizedBox(width: 10),
-      Text('Đăng nhập lần cuối: ${widget.myUser2.lastSignInAt}'),
+      Text('Đăng nhập lần cuối: ${myUser.lastSignInAt}'),
     ]);
   }
 
-  Widget _name() {
+  Widget _name(MyUser myUser) {
     return Row(children: [
       const Icon(Icons.tag_faces_outlined),
       const SizedBox(width: 10),
-      Text('Tên: ${widget.myUser2.name ?? ''}'),
+      Text('Tên: ${myUser.name ?? ''}'),
     ]);
   }
 
-  Widget _phoneNumber() {
+  Widget _phoneNumber(MyUser myUser) {
     return Row(children: [
       const Icon(Icons.phone),
       const SizedBox(width: 10),
       const Text('Số điện thoại: '),
       Container(
         child:
-        Text(widget.myUser2.phoneNumber ?? 'Người dùng chưa thiết lập sđt'),
+        Text(myUser.phoneNumber ?? 'Người dùng chưa thiết lập sđt'),
         padding: const EdgeInsets.all(5.0),
         decoration: const BoxDecoration(
           color: Colors.blue,
@@ -280,13 +191,13 @@ class _BodyState extends State<Body> {
     ]);
   }
 
-  Widget _role() {
+  Widget _role(MyUser myUser) {
     return Row(children: [
       const Icon(Icons.people_alt_outlined),
       const SizedBox(width: 10),
       const Text('Role: '),
       Container(
-        child: Text(widget.myUser2.role),
+        child: Text(myUser.role),
         padding: const EdgeInsets.all(5.0),
         decoration: const BoxDecoration(
           color: Colors.blue,
@@ -296,14 +207,14 @@ class _BodyState extends State<Body> {
     ]);
   }
 
-  Widget _selfIntroduction() {
+  Widget _selfIntroduction(MyUser myUser) {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const Icon(Icons.event_note_outlined),
       const SizedBox(width: 10),
       const Text('Giới thiệu: '),
       const SizedBox(width: 10),
       Container(
-        child: Text(widget.myUser2.selfIntroduction ?? ''),
+        child: Text(myUser.selfIntroduction ?? ''),
         padding: const EdgeInsets.all(15.0),
         constraints:
         BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .6),
@@ -317,8 +228,8 @@ class _BodyState extends State<Body> {
 
   bool _showShipperInfo = true;
 
-  Widget _shipperInfo() {
-    if (widget.myUser2.shipperInfo == null) {
+  Widget _shipperInfo(MyUser myUser) {
+    if (myUser.shipperInfo == null) {
       return Container();
     }
     return Column(
@@ -347,7 +258,7 @@ class _BodyState extends State<Body> {
                 const SizedBox(width: 10),
                 const Text('Loại phương tiện: '),
                 Container(
-                  child: Text(widget.myUser2.shipperInfo!.vehicleType ?? ''),
+                  child: Text(myUser.shipperInfo!.vehicleType ?? ''),
                   padding: const EdgeInsets.all(5.0),
                   decoration: const BoxDecoration(
                     color: Colors.blue,
@@ -363,7 +274,7 @@ class _BodyState extends State<Body> {
                 const SizedBox(width: 10),
                 Container(
                   child: Text(
-                      'Miêu tả: ${widget.myUser2.shipperInfo!.vehicleDescription ?? ''}'),
+                      'Miêu tả: ${myUser.shipperInfo!.vehicleDescription ?? ''}'),
                   padding: const EdgeInsets.all(15.0),
                   constraints: BoxConstraints(
                       maxWidth: MediaQuery.of(context).size.width * .6),
@@ -379,7 +290,7 @@ class _BodyState extends State<Body> {
                 const SizedBox(width: 10),
                 const Text('Trạng thái: '),
                 Container(
-                  child: Text(widget.myUser2.shipperInfo!.status ?? ''),
+                  child: Text(myUser.shipperInfo!.status ?? ''),
                   padding: const EdgeInsets.all(5.0),
                   decoration: const BoxDecoration(
                     color: Colors.blue,
@@ -536,9 +447,9 @@ class _BodyState extends State<Body> {
     await FeedBacksPage.showPlz(context, myUser, myUserId2);
   }
 
-  Widget _feedback() {
+  Widget _feedback(MyUser myUser) {
     return StreamBuilder(
-      stream: DatabaseService().getStreamListFeedback(widget.myUser2.id!),
+      stream: DatabaseService().getStreamListFeedback(myUser.id!),
       builder: (BuildContext context, AsyncSnapshot<List<FeedBack>> snapshot) {
         if (snapshot.hasData) {
           List<FeedBack> feedBacks = snapshot.data!;
@@ -551,7 +462,7 @@ class _BodyState extends State<Body> {
                   //TODO: xem tat ca
                   print('summary, click xem tat ca');
                   _showFeedBacksPage(
-                      context, widget.myUser, widget.myUser2.id!);
+                      context, widget.myUser, myUser.id!);
                 },
               ),
             ]),
@@ -567,70 +478,116 @@ class _BodyState extends State<Body> {
     );
   }
 
+
+  Future<void> _blockMyUser() async {
+    MyUser? myUser = await DatabaseService().getMyUserByDocumentId(widget.myUserId2);
+    if(myUser!=null){
+      myUser.isBlocked = !myUser.isBlocked;
+      await DatabaseService().updateMyUserOnDB(myUser.id!, myUser.toMap());
+    }
+  }
+
+  //TODO: _showActions
+  Future<void> _showActions(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context2) => AlertDialog(
+        title: const Text('Chọn thao tác'),
+        content: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * .8),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            _blockMyUser();
+                          },
+                          child: const Text('Khóa người dùng')),
+                    ),
+                    const Spacer(),
+                  ]),
+                ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyUser(){
+    return StreamBuilder(stream: DatabaseService().getStreamMyUserByDocumentId(widget.myUserId2),
+      builder: (BuildContext context, AsyncSnapshot<MyUser?> snapshot) {
+      if(snapshot.data!=null){
+        MyUser myUser = snapshot.data!;
+        return Scaffold(
+          appBar: buildAppBar(myUser),
+          body: Column(children: [
+            //TODO: fields
+            Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(
+                    reverse: false,
+                    child: Column(
+                      children: [
+                        //TODO: address
+                        _address(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _birthDate
+                        _birthDate(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _createdAt
+                        _createdAt(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _email
+                        _email(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _isActive
+                        _isActive(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _isBlock
+                        _isBlock(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _lastSignInAt
+                        _lastSignInAt(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _name
+                        _name(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _phoneNumber
+                        _phoneNumber(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _role
+                        _role(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _selfIntroduction
+                        _selfIntroduction(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _shipperInfo
+                        _shipperInfo(myUser),
+                        const SizedBox(height: 10),
+                        //TODO: _feedback
+                        _feedback(myUser),
+                      ],
+                    ),
+                  ),
+                )),
+          ]),
+        );
+      }
+      return const Text('_buildMyUser waitttt');
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: Column(children: [
-        //TODO: fields
-        Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SingleChildScrollView(
-                controller: widget.controller,
-                reverse: false,
-                child: Column(
-                  children: [
-                    //TODO: address
-                    _address(),
-                    const SizedBox(height: 10),
-                    //TODO: _birthDate
-                    _birthDate(),
-                    const SizedBox(height: 10),
-                    //TODO: _createdAt
-                    _createdAt(),
-                    const SizedBox(height: 10),
-                    //TODO: _email
-                    _email(),
-                    const SizedBox(height: 10),
-                    //TODO: _isActive
-                    _isActive(),
-                    const SizedBox(height: 10),
-                    //TODO: _isBlock
-                    _isBlock(),
-                    const SizedBox(height: 10),
-                    //TODO: _lastSignInAt
-                    _lastSignInAt(),
-                    const SizedBox(height: 10),
-                    //TODO: _name
-                    _name(),
-                    const SizedBox(height: 10),
-                    //TODO: _phoneNumber
-                    _phoneNumber(),
-                    const SizedBox(height: 10),
-                    //TODO: _role
-                    _role(),
-                    const SizedBox(height: 10),
-                    //TODO: _selfIntroduction
-                    _selfIntroduction(),
-                    const SizedBox(height: 10),
-                    //TODO: _shipperInfo
-                    _shipperInfo(),
-                    const SizedBox(height: 10),
-                    //TODO: _feedback
-                    _feedback(),
-                  ],
-                ),
-              ),
-            )),
-        //TODO: call, sms, chat
-        if (widget.myUser2.id! != widget.myUser.id!)
-          Row(children: [
-            Row(children: const [Icon(Icons.call), Text('Gọi điện')]),
-            Row(children: const [Icon(Icons.sms), Text('Gửi SMS')]),
-            Row(children: const [Icon(Icons.chat), Text('Chat')]),
-          ]),
-      ]),
-    );
+    return _buildMyUser();
   }
 }
