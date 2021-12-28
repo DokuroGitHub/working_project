@@ -52,6 +52,10 @@ dependencies:
   overlay_support:
   firebase_analytics: ^9.0.4
   mailer: ^5.0.2
+  awesome_notifications: ^0.6.19
+  device_info: ^2.0.3
+  url_launcher: ^6.0.3
+  fl_chart: ^0.40.6
 
 dev_dependencies:
   flutter_driver:

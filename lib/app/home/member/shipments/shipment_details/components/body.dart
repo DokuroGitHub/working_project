@@ -3,10 +3,14 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:working_project/app/home/feedbacks/feedbacks_page.dart';
 import 'package:working_project/app/home/member/posts/post_details_page.dart';
 import 'package:working_project/app/home/messages/messages_page.dart';
+import 'package:working_project/services/cloud_messaging_service/cloud_mesaging_service.dart';
 import 'package:working_project/services/message_service.dart';
+import 'package:working_project/services/shared_preferences_service.dart';
+import 'package:working_project/utils/notification_util.dart';
 
 import '/app/home/account/account_page.dart';
 
@@ -511,6 +515,8 @@ class _BodyState extends State<Body> {
       await DatabaseService()
           .updateShipment(widget.shipment.id!, widget.shipment.toMap());
 
+      //await pushFirebaseNotification();
+
       //TODO: everything ok
       final snackBar = SnackBar(
         content: const Text('Accepted offer successfully !'),
@@ -526,6 +532,8 @@ class _BodyState extends State<Body> {
       print('sending email');
       String? winnerEmail;
       List<String> loserEmails = [];
+      String? winner;
+      List<String> losers = [];
       for(int i=0;i<widget.shipment.shippersEnrolled.length;i++){
         MyUser? myUser = await DatabaseService().getMyUserByDocumentId(widget.shipment.shippersEnrolled[i]);
         String? email = myUser?.email;
@@ -536,10 +544,19 @@ class _BodyState extends State<Body> {
             loserEmails.add(email);
           }
         }
+        String? firebaseAppToken = myUser?.firebaseAppToken;
+        if(firebaseAppToken!=null) {
+          if(myUser!.id! == shipperId){
+            winner = firebaseAppToken;
+          }else {
+            losers.add(firebaseAppToken);
+          }
+        }
       }
       //TODO: send mail
       MessageService().sendMail(winnerEmail: winnerEmail, loserEmails: loserEmails);
-
+      //TODO: send notification
+      CloudMessagingService().sendNotifications(winner: winner,losers: losers);
     } catch (e) {
       unawaited(showDialog(
         context: context,

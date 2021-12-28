@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:working_project/common_widgets/full_file_view_page.dart';
 
 import '/app/home/member/posts/components/video_player_box.dart';
 import '/models/attachment.dart';
@@ -38,28 +39,42 @@ class PostAttachments extends StatelessWidget {
         ));
   }
 
-  Widget _item(Attachment attachment) {
+  Future<void> _showFullFileViewPage(
+      BuildContext context, Attachment attachment) async {
+    await FullFileViewPage.showPlz(context: context, attachment: attachment);
+  }
+
+  Widget _item(BuildContext context, Attachment attachment) {
     if (attachment.type == 'IMAGE') {
-      return _imageItem(attachment.thumbURL, onTap: () {
+      return _imageItem(attachment.thumbURL??attachment.fileURL, onTap: () {
         print('tap IMAGE');
+        _showFullFileViewPage(context, attachment);
       });
     }
     if (attachment.type == 'VIDEO') {
       return VideoPlayerBox(
-          //myUser: myUser,
-        attachment: attachment);
+        //myUser: myUser,
+        attachment: attachment,
+        onDoubleTap: () {
+          _showFullFileViewPage(context, attachment);
+        },
+      );
     }
     if (attachment.type == 'GIF') {
-      return _imageItem(attachment.thumbURL, onTap: () {
-        print('tap GIF');
-      });
+      return VideoPlayerBox(
+        //myUser: myUser,
+        attachment: attachment,
+        onDoubleTap: () {
+          _showFullFileViewPage(context, attachment);
+        },
+      );
     }
     if (attachment.type == 'FILE') {
       return _imageItem(attachment.thumbURL, onTap: () {
         print('tap FILE');
       });
     }
-    return _imageItem(attachment.thumbURL, onTap: () {
+    return _imageItem(attachment.thumbURL??attachment.fileURL, onTap: () {
       print('tap FILE');
     });
   }
@@ -70,21 +85,21 @@ class PostAttachments extends StatelessWidget {
     }
     if (attachments.length == 1) {
       return [
-        Expanded(child: _item(attachments[0])),
+        Expanded(child: _item(context, attachments[0])),
       ];
     }
     if (attachments.length == 2) {
       //TODO: 2 item, hang doc
       Expanded(
         child: Column(children: [
-          _item(attachments[0]),
-          _item(attachments[1]),
+          _item(context,attachments[0]),
+          _item(context,attachments[1]),
         ]),
       );
       //TODO: 2 item, hang ngang
       return [
-        Expanded(child: _item(attachments[0])),
-        Expanded(child: _item(attachments[1])),
+        Expanded(child: _item(context,attachments[0])),
+        Expanded(child: _item(context,attachments[1])),
       ];
     }
     if (attachments.length == 3) {
@@ -92,21 +107,21 @@ class PostAttachments extends StatelessWidget {
       [
         Expanded(
           child: Column(children: [
-            Expanded(child: _item(attachments[0])),
-            Expanded(child: _item(attachments[1])),
+            Expanded(child: _item(context,attachments[0])),
+            Expanded(child: _item(context,attachments[1])),
           ]),
         ),
-        Expanded(child: _item(attachments[2])),
+        Expanded(child: _item(context,attachments[2])),
       ];
       //TODO: 3 item, 2 tren 1 duoi
       return [
         Expanded(
           child: Column(children: [
             Row(children: [
-              Expanded(child: _item(attachments[0])),
-              Expanded(child: _item(attachments[1])),
+              Expanded(child: _item(context,attachments[0])),
+              Expanded(child: _item(context,attachments[1])),
             ]),
-            Expanded(child: _item(attachments[2])),
+            Expanded(child: _item(context,attachments[2])),
           ]),
         ),
       ];
@@ -116,14 +131,14 @@ class PostAttachments extends StatelessWidget {
       return [
         Expanded(
           child: Column(children: [
-            Expanded(child: _item(attachments[0])),
-            Expanded(child: _item(attachments[1])),
+            Expanded(child: _item(context,attachments[0])),
+            Expanded(child: _item(context,attachments[1])),
           ]),
         ),
         Expanded(
           child: Column(children: [
-            Expanded(child: _item(attachments[2])),
-            Expanded(child: _item(attachments[3])),
+            Expanded(child: _item(context,attachments[2])),
+            Expanded(child: _item(context,attachments[3])),
           ]),
         ),
       ];
@@ -132,15 +147,15 @@ class PostAttachments extends StatelessWidget {
     return [
       Expanded(
         child: Column(children: [
-          Expanded(child: _item(attachments[0])),
-          Expanded(child: _item(attachments[1])),
+          Expanded(child: _item(context,attachments[0])),
+          Expanded(child: _item(context,attachments[1])),
         ]),
       ),
       Expanded(
         child: Column(children: [
-          Expanded(child: _item(attachments[2])),
+          Expanded(child: _item(context,attachments[2])),
           Stack(alignment: AlignmentDirectional.bottomEnd, children: [
-            _item(attachments[3]),
+            _item(context,attachments[3]),
             Text(
               '+${attachments.length - 4} item(s)...',
               style: const TextStyle(fontSize: 25, color: Colors.white),

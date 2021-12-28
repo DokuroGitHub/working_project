@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:working_project/app/home/admin/posts/components/post_box.dart';
+import 'package:working_project/app/home/member/posts/components/post_box.dart';
 import 'package:working_project/models/my_user.dart';
 import 'package:working_project/models/post.dart';
 import 'package:working_project/routing/app_router.dart';

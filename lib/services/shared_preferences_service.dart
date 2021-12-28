@@ -32,4 +32,16 @@ class SharedPreferencesService {
 
   String? getUserPassword() => sharedPreferences.getString(userPasswordKey);
 
+
+  //TODO:
+  static Future<bool> setFirebaseAppToken(String firebaseAppToken) async {
+    final sp = await SharedPreferences.getInstance();
+    return sp.setString('firebaseAppToken', firebaseAppToken);
+  }
+
+  static Future<String?> getFirebaseAppToken() async {
+    final sp = await SharedPreferences.getInstance();
+    return sp.getString('firebaseAppToken');
+  }
+
 }

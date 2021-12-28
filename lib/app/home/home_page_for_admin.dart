@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:working_project/app/home/admin/post_reports/post_reports_page.dart';
 
-import '/app/home/member/posts/posts_page.dart';
-import '/app/home/member/shipments/shipments_page.dart';
 import '/models/my_user.dart';
 import 'account/account_page.dart';
+import 'admin/charts/charts_page.dart';
 import 'admin/my_users/my_users_page.dart';
-import 'member/chats/chats_page.dart';
-import 'member/contacts/contacts_page.dart';
+import 'admin/posts/posts_page.dart';
 
 class HomePageForAdmin extends StatefulWidget {
   const HomePageForAdmin({
@@ -41,6 +39,11 @@ class _HomePageForAdminState extends State<HomePageForAdmin> {
       height: _bottomNavBarHeight,
       child: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.insert_chart_outlined),
+              tooltip: 'Charts here',
+              label: 'Charts',
+              backgroundColor: Colors.green),
           BottomNavigationBarItem(
               icon: const Icon(Icons.post_add),
               tooltip: 'Posts here',
@@ -83,13 +86,15 @@ class _HomePageForAdminState extends State<HomePageForAdmin> {
   Widget build(BuildContext context) {
 
     final List<Widget> _widgetOptions = [
-      //TODO: page 0
-      PostsPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 1
-      PostReportsPage(myUser: widget.myUser, controller: _controller),
+      ChartsPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 2
-      MyUsersPage(myUser: widget.myUser, controller: _controller),
+      PostsPage(myUser: widget.myUser, controller: _controller),
       //TODO: page 3
+      PostReportsPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 4
+      MyUsersPage(myUser: widget.myUser, controller: _controller),
+      //TODO: page 5
       AccountPage(myUser: widget.myUser, myUserId2: widget.myUser.id!, controller: _controller,),
     ];
 

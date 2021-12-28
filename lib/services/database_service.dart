@@ -227,6 +227,33 @@ class DatabaseService {
             .toList());
   }
 
+  //TODO: getStreamListMyUserByPhoneNumberPart
+  Stream<List<Post>> getStreamListPostBySomePart({String? field, String? searchKey, PostQuery? query}) {
+    Query<Map<String, dynamic>> ref = FirebaseFirestore.instance
+        .collection('post');
+    if(field!=null && searchKey!=null) {
+      ref = ref
+          //.where(field, isGreaterThanOrEqualTo: searchKey)
+          //.where(field, isLessThan: searchKey + 'z')
+          //.orderBy(field, descending: true)
+      ;
+    }
+    Query<Map<String, dynamic>> newQuery;
+    switch (query) {
+      case PostQuery.createdAtAsc:
+      case PostQuery.createdAtDesc:
+        newQuery = ref.orderBy('createdAt',
+            descending: query == PostQuery.createdAtDesc);
+        break;
+      default:
+        newQuery = ref;
+        break;
+    }
+    return newQuery.snapshots().map((snapshot) => snapshot.docs
+        .map((doc) => Post.fromMap(doc.data(), doc.id))
+        .toList());
+  }
+
   //TODO: getStreamPostByDocumentId
   Stream<Post?> getStreamPostByDocumentId(String documentId) {
     return FirebaseFirestore.instance

@@ -82,3 +82,8 @@ List<Map<String, dynamic>> _convertListAttachmentToMap(
   }
   return map;
 }
+
+enum PostQuery{
+  createdAtAsc,
+  createdAtDesc,
+}

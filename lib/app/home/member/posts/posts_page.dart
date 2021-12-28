@@ -6,6 +6,7 @@ import '/app/home/member/posts/components/storytile.dart';
 import '/models/my_user.dart';
 import '/models/post.dart';
 import '/services/database_service.dart';
+import 'edit_post_page.dart';
 
 class PostsPage extends StatefulWidget {
   const PostsPage({required this.myUser, this.controller});
@@ -18,6 +19,10 @@ class PostsPage extends StatefulWidget {
 }
 
 class _PostsPageState extends State<PostsPage> {
+  String field = 'createdBy';
+  String somePart = 'peXkGVl6GvcllR7D9g5oPOm0zV62';
+  PostQuery _query = PostQuery.createdAtDesc;
+
   //Here I'm going to import a list of images that we will use for the profile picture and the storys
   List<String> avatarUrl = [
     "https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=80",
@@ -40,17 +45,44 @@ class _PostsPageState extends State<PostsPage> {
       appBar: AppBar(
         elevation: 0.0,
         //backgroundColor: mainBlack,
-        title: Text('Facebook', style: Theme.of(context).appBarTheme.titleTextStyle),
+        title: Text('Facebook',
+            style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.search),
             color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.menu),
-            color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+          PopupMenuButton<PostQuery>(
+            onSelected: (PostQuery value) {
+              setState(() {
+                _query = value;
+              });
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<PostQuery>(
+                  value: PostQuery.createdAtDesc,
+                  child: Text(
+                    'Ngày đăng giảm dần',
+                    style: TextStyle(
+                        color: (_query == PostQuery.createdAtDesc)
+                            ? Colors.red
+                            : Theme.of(context).textTheme.bodyText1?.color),
+                  ),
+                ),
+                PopupMenuItem<PostQuery>(
+                  value: PostQuery.createdAtAsc,
+                  child: Text(
+                    'Ngày đăng tăng dần',
+                    style: TextStyle(
+                        color: (_query == PostQuery.createdAtAsc)
+                            ? Colors.red
+                            : Theme.of(context).textTheme.bodyText1?.color),
+                  ),
+                ),
+              ];
+            },
           ),
         ],
       ),
@@ -84,17 +116,26 @@ class _PostsPageState extends State<PostsPage> {
                           ),
                           const SizedBox(width: 10.0),
                           Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                  contentPadding:
-                                      const EdgeInsets.only(left: 25.0),
-                                  hintText: "Post something...",
-                                  filled: true,
-                                  fillColor: Theme.of(context).bannerTheme.backgroundColor,
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
-                                  )),
+                            child: GestureDetector(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        const EdgeInsets.only(left: 25.0),
+                                    hintText: "Post something...",
+                                    filled: true,
+                                    enabled: false,
+                                    fillColor: Theme.of(context)
+                                        .bannerTheme
+                                        .backgroundColor,
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderSide: BorderSide.none,
+                                    )),
+                              ),
+                              onTap: () {
+                                EditPostPage.showPlz(context,
+                                    myUser: widget.myUser);
+                              },
                             ),
                           ),
                         ],
@@ -108,32 +149,35 @@ class _PostsPageState extends State<PostsPage> {
                         children: [
                           Expanded(
                             child: TextButton.icon(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(
                                 Icons.live_tv,
                                 color: Color(0xFFF23E5C),
                               ),
-                              label: Text('Live',  style: Theme.of(context).textTheme.button),
+                              label: Text('Live',
+                                  style: Theme.of(context).textTheme.button),
                             ),
                           ),
                           Expanded(
                             child: TextButton.icon(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(
                                 Icons.image,
                                 color: Color(0xFF58C472),
                               ),
-                              label: Text('Picture', style: Theme.of(context).textTheme.button),
+                              label: Text('Picture',
+                                  style: Theme.of(context).textTheme.button),
                             ),
                           ),
                           Expanded(
                             child: TextButton.icon(
-                              onPressed: (){},
+                              onPressed: () {},
                               icon: const Icon(
                                 Icons.insert_emoticon,
                                 color: Color(0xFFF8C03E),
                               ),
-                              label: Text('Activity', style: Theme.of(context).textTheme.button),
+                              label: Text('Activity',
+                                  style: Theme.of(context).textTheme.button),
                             ),
                           ),
                         ],
@@ -159,7 +203,8 @@ class _PostsPageState extends State<PostsPage> {
               const SizedBox(height: 20.0),
               //TODO: posts stream
               StreamBuilder(
-                  stream: DatabaseService().getStreamListPost(),
+                  stream: DatabaseService().getStreamListPostBySomePart(
+                      field: field, searchKey: somePart, query: _query),
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Post>> snapshot) {
                     if (snapshot.hasError) {
@@ -167,7 +212,8 @@ class _PostsPageState extends State<PostsPage> {
                     }
                     if (snapshot.hasData) {
                       List<Post> posts = snapshot.data!;
-                      return Column(children: posts.map((post) {
+                      return Column(
+                          children: posts.map((post) {
                         return PostBox(myUser: widget.myUser, post: post);
                       }).toList());
                     } else {

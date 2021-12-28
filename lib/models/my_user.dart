@@ -4,6 +4,7 @@ import 'shipper_info.dart';
 
 class MyUser {
   String? id;
+  String? firebaseAppToken;
   Address? address;
   DateTime? birthDate;
   DateTime createdAt;
@@ -20,6 +21,7 @@ class MyUser {
 
   MyUser({
     this.id,
+    this.firebaseAppToken,
     this.address,
     this.birthDate,
     required this.createdAt,
@@ -62,6 +64,7 @@ class MyUser {
     }
     return MyUser(
       id: documentId,
+      firebaseAppToken: json['firebaseAppToken'] as String?,
       address: _convertMapToAddress(json['address'] as Map<String, dynamic>?),
       birthDate: (json['birthDate'] as Timestamp?)?.toDate(),
       createdAt: createdAt,
@@ -81,6 +84,7 @@ class MyUser {
 
   Map<String, dynamic> toMap() {
     return {
+      'firebaseAppToken': firebaseAppToken,
       'address': _convertAddressToMap(address),
       'birthDate': birthDate,
       'createdAt': createdAt,
