@@ -51,7 +51,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
               });
             },
             child: Text(
-              'avg',
+              widget.lineModel.title,
               style: TextStyle(
                   fontSize: 12,
                   color:
@@ -156,7 +156,6 @@ class _LineChartSample2State extends State<LineChartSample2> {
             FlSpot(10, widget.lineModel.lines[0].value11.toDouble()),
             FlSpot(11, widget.lineModel.lines[0].value12.toDouble()),
           ],
-          isCurved: true,
           colors: gradientColors,
           barWidth: 5,
           isStrokeCapRound: true,

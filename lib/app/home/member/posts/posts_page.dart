@@ -22,6 +22,9 @@ class _PostsPageState extends State<PostsPage> {
   String field = 'createdBy';
   String somePart = 'peXkGVl6GvcllR7D9g5oPOm0zV62';
   PostQuery _query = PostQuery.createdAtDesc;
+  int _limit = 5;
+  bool _loadingMore = false;
+  late ScrollController controller;
 
   //Here I'm going to import a list of images that we will use for the profile picture and the storys
   List<String> avatarUrl = [
@@ -36,6 +39,35 @@ class _PostsPageState extends State<PostsPage> {
     "https://images.unsplash.com/photo-1600008646149-eb8835bd979d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=666&q=80",
     "https://images.unsplash.com/photo-1502920313556-c0bbbcd00403?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=967&q=80",
   ];
+
+  void _scrollListener() {
+    //print('${controller.position.extentAfter}, $_limit, $_loadingMore');
+    if (controller.position.extentAfter < 500) {
+      if (!_loadingMore) {
+        setState(() {
+          _limit += 5;
+          _loadingMore = true;
+        });
+      }
+    }else {
+      setState(() {
+        _loadingMore = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller = widget.controller??ScrollController();
+    controller.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +86,8 @@ class _PostsPageState extends State<PostsPage> {
             color: Theme.of(context).appBarTheme.titleTextStyle?.color,
           ),
           PopupMenuButton<PostQuery>(
+            icon: Icon(Icons.menu,
+              color: Theme.of(context).appBarTheme.titleTextStyle?.color,),
             onSelected: (PostQuery value) {
               setState(() {
                 _query = value;
@@ -204,18 +238,26 @@ class _PostsPageState extends State<PostsPage> {
               //TODO: posts stream
               StreamBuilder(
                   stream: DatabaseService().getStreamListPostBySomePart(
-                      field: field, searchKey: somePart, query: _query),
+                      field: field, searchKey: somePart, query: _query, limit: _limit),
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Post>> snapshot) {
-                    if (snapshot.hasError) {
-                      return Container();
-                    }
-                    if (snapshot.hasData) {
+                    if (snapshot.data!=null) {
                       List<Post> posts = snapshot.data!;
-                      return Column(
-                          children: posts.map((post) {
-                        return PostBox(myUser: widget.myUser, post: post);
-                      }).toList());
+                      //print('post.length: ${posts.length}');
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return PostBox(myUser: widget.myUser, post: posts[index]);
+                        },
+                        itemCount: posts.length,
+                      );
+
+                      //return Column(
+                      //    children: posts.map((post) {
+                      //  return PostBox(myUser: widget.myUser, post: post);
+                      //}).toList());
+
                     } else {
                       return Container();
                     }

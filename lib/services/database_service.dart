@@ -228,7 +228,7 @@ class DatabaseService {
   }
 
   //TODO: getStreamListMyUserByPhoneNumberPart
-  Stream<List<Post>> getStreamListPostBySomePart({String? field, String? searchKey, PostQuery? query}) {
+  Stream<List<Post>> getStreamListPostBySomePart({String? field, String? searchKey, PostQuery? query, int limit=0}) {
     Query<Map<String, dynamic>> ref = FirebaseFirestore.instance
         .collection('post');
     if(field!=null && searchKey!=null) {
@@ -241,12 +241,18 @@ class DatabaseService {
     Query<Map<String, dynamic>> newQuery;
     switch (query) {
       case PostQuery.createdAtAsc:
+        newQuery =
+            ref.orderBy('createdAt', descending: false).limitToLast(limit);
+        break;
       case PostQuery.createdAtDesc:
-        newQuery = ref.orderBy('createdAt',
-            descending: query == PostQuery.createdAtDesc);
+        newQuery = ref.orderBy('createdAt', descending: true).limit(limit);
         break;
       default:
-        newQuery = ref;
+        if(limit!=0){
+          newQuery = ref.limit(limit);
+        }else{
+          newQuery = ref;
+        }
         break;
     }
     return newQuery.snapshots().map((snapshot) => snapshot.docs

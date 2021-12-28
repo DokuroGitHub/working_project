@@ -115,6 +115,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     AwesomeNotifications().createdSink.close();
     AwesomeNotifications().displayedSink.close();
     AwesomeNotifications().actionSink.close();
+    AwesomeNotifications().dispose();
     super.dispose();
   }
 

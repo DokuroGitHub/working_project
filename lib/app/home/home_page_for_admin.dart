@@ -6,7 +6,7 @@ import '/models/my_user.dart';
 import 'account/account_page.dart';
 import 'admin/charts/charts_page.dart';
 import 'admin/my_users/my_users_page.dart';
-import 'admin/posts/posts_page.dart';
+import 'member/posts/posts_page.dart';
 
 class HomePageForAdmin extends StatefulWidget {
   const HomePageForAdmin({
