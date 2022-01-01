@@ -10,7 +10,7 @@ class MyUserAvatar extends StatelessWidget {
   final VoidCallback? onTap;
 
   final String defaultPhotoURL =
-      'https://media.discordapp.net/attachments/781870218192355329/795999369165930546/135564527_2670553363257472_1695878780981957578_o.png';
+      'https://yt3.ggpht.com/yti/APfAmoEUl_jqsKc0uhb1z2aakEsBQ7ISQllbZgOgA7lc=s88-c-k-c0x00ffffff-no-rj-mo';
 
   Widget _circleAvatar({String? photoURL}) {
     return CircleAvatar(

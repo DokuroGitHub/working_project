@@ -12,24 +12,24 @@ class Helper {
     var month = day / 30;
     var year = day / (365);
     if (year.toInt() > 0) {
-      time = year.toInt().toString() + ' năm trước';
+      time = year.toInt().toString() + ' năm trc';
     } else {
       if (month.toInt() > 0) {
-        time = month.toInt().toString() + ' tháng trước';
+        time = month.toInt().toString() + ' tháng trc';
       } else {
         if (week.toInt() > 0) {
-          time = week.toInt().toString() + '  tuần trước';
+          time = week.toInt().toString() + '  tuần trc';
         } else {
           if (day.toInt() > 0) {
-            time = day.toInt().toString() + ' ngày trước';
+            time = day.toInt().toString() + ' ngày trc';
           } else {
             if (hour.toInt() > 0) {
-              time = hour.toInt().toString() + ' giờ trước';
+              time = hour.toInt().toString() + ' giờ trc';
             } else {
               if (minute.toInt() > 0) {
-                time = minute.toInt().toString() + ' phút trước';
+                time = minute.toInt().toString() + ' phút trc';
               } else {
-                time = second.toInt().toString() + ' giây trước';
+                time = second.toInt().toString() + ' giây trc';
               }
             }
           }

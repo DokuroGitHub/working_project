@@ -77,7 +77,7 @@ class _PostsPageState extends State<PostsPage> {
       appBar: AppBar(
         elevation: 0.0,
         //backgroundColor: mainBlack,
-        title: Text('Facebook',
+        title: Text('Bài viết',
             style: Theme.of(context).appBarTheme.titleTextStyle),
         actions: [
           IconButton(

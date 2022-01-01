@@ -194,7 +194,7 @@ class LineChartPage extends StatelessWidget {
             }
           }
           num temp = maxY;
-          int zeros = 10;
+          int zeros = 1;
           while (temp > 1) {
             zeros = zeros * 10;
             temp = temp / 10;
@@ -267,7 +267,7 @@ class LineChartPage extends StatelessWidget {
           num lineModel2y4 = 0;
           num lineModel2y5 = 0;
           num temp2 = maxY;
-          int zeros2 = 10;
+          int zeros2 = 1;
           while (temp2 > 1) {
             zeros2 = zeros2 * 10;
             temp2 = temp2 / 10;

@@ -41,9 +41,9 @@ class _EditPostPageState extends State<EditPostPage> {
 
   bool _showBottom = false;
   final FocusNode _focusNode = FocusNode();
-  //final TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   bool _ableToPost = false;
-  String _text = '';
+  //String _text = '';
 
   //TODO: file components
   List<File> pickingFiles = [];
@@ -53,8 +53,8 @@ class _EditPostPageState extends State<EditPostPage> {
   void initState() {
     super.initState();
 
-    _text = widget.post?.text??'';
-    // _textController.text = widget.post?.text??'';
+    //_text = widget.post?.text??'';
+    _textController.text = widget.post?.text??'';
     // _textController.addListener(() {
     //   if(_textController.text.trim().isNotEmpty || pickingFiles.isNotEmpty){
     //     setState(() {
@@ -66,7 +66,7 @@ class _EditPostPageState extends State<EditPostPage> {
 
   @override
   void dispose() {
-    //_textController.dispose();
+    _textController.dispose();
     _focusNode.dispose();
 
     super.dispose();
@@ -103,7 +103,7 @@ class _EditPostPageState extends State<EditPostPage> {
                           pickingFiles.removeAt(i);
                           pickingFileThumbnails.removeAt(i);
                         });
-                        if(pickingFiles.isEmpty && _text.trim().isEmpty){
+                        if(pickingFiles.isEmpty && _textController.text.trim().isEmpty){
                           setState(() {
                             _ableToPost = false;
                           });
@@ -272,7 +272,7 @@ class _EditPostPageState extends State<EditPostPage> {
   Future<void> _submit() async {
     _focusNode.unfocus();
     //String text = _textController.text.trim();
-    String text = _text.trim();
+    String text = _textController.text.trim();
     print('text: $text');
     if(widget.post==null) {
       //TODO: new post
@@ -386,9 +386,9 @@ class _EditPostPageState extends State<EditPostPage> {
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(5))),
           child: TextButton(
-            child: const Text(
-              'Đăng',
-              style: TextStyle(fontSize: 18, color: Colors.white),
+            child: Text(
+              (widget.post==null)? 'Đăng':'Lưu',
+              style: const TextStyle(fontSize: 18, color: Colors.white),
             ),
             style: TextButton.styleFrom(
               backgroundColor: _ableToPost
@@ -465,10 +465,10 @@ class _EditPostPageState extends State<EditPostPage> {
                       Expanded(
                         child: TextField(
                           focusNode: _focusNode,
-                          //controller: _textController,
+                          controller: _textController,
                           onChanged: (text){
-                            _text = text;
-                            if(_text.trim().isNotEmpty || pickingFiles.isNotEmpty){
+                            //_text = text;
+                            if(_textController.text.trim().isNotEmpty || pickingFiles.isNotEmpty){
                               setState(() {
                                 _ableToPost = true;
                               });

@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:working_project/models/post_reported.dart';
 
 import '/common_widgets/helper.dart';
 import '/models/attachment.dart';
@@ -15,6 +17,8 @@ import '/models/my_user.dart';
 import '/models/post.dart';
 import '/models/shipment.dart';
 import '/services/database_service.dart';
+import '../edit_post_page.dart';
+import '../post_details_page.dart';
 import 'comment_item.dart';
 import 'my_user_avatar.dart';
 import 'my_user_name.dart';
@@ -1672,6 +1676,167 @@ class _PostBoxState extends State<PostBox> with TickerProviderStateMixin{
     return await rootBundle.load('assets/sounds/emotes/$nameSound');
   }
 
+  //TODO: _showReportForm
+  Future<void> _showReportForm(BuildContext context) async {
+    String type = 'SPAM';
+    String text = '';
+    await showDialog<void>(
+      context: context,
+      builder: (context2) => SimpleDialog(
+        title: const Text('Report'),
+        children: [
+          //TODO: dropdown list
+          Row(children: [
+            const Spacer(),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .5,
+              child: DropdownButtonFormField<String>(
+                value: type,
+                items: const [
+                  DropdownMenuItem<String>(
+                    value: 'SPAM',
+                    child: Text('Spam'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'CONTENT18',
+                    child: Text('Chứa nội dung người lớn'),
+                  ),
+                  DropdownMenuItem<String>(
+                    value: 'OTHERS',
+                    child: Text('Khác'),
+                  ),
+                ],
+                onChanged: (_) {
+                  if(_!=null) {
+                    setState(() {
+                      type = _;
+                    });
+                  }
+                  print('type: $type');
+                },
+              ),
+            ),
+            const Spacer(),
+          ],),
+          //TODO: text
+          Row(children: [
+            const Spacer(),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * .5,
+              child: TextFormField(
+                onChanged: (s){
+                  setState(() {
+                    text = s;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: 'Ghi chú',
+                  hintText: 'Nội dung báo cáo',
+                  border: OutlineInputBorder(),
+                ),
+                autocorrect: false,
+                keyboardType: TextInputType.text,
+                textInputAction: TextInputAction.next,
+              ),
+            ),
+            const Spacer(),
+          ],),
+          //TODO: actions
+          Row(children: [
+            const SizedBox(width: 10),
+            //TODO: hủy
+            TextButton(child: const Text('Hủy'),
+              onPressed: (){
+                Navigator.of(context2).pop();
+              },
+            ),
+            const Spacer(),
+            //TODO: Gửi
+            TextButton(
+              child: const Text('Gửi'),
+              onPressed: () async {
+                Navigator.of(context2).pop();
+                try {
+                  PostReported postReported = PostReported(
+                    createdAt: DateTime.now(),
+                    createdBy: widget.myUser.id!,
+                    postId: widget.post.id!,
+                    status: 'CHUAXULY',
+                    type: type,
+                    text: text,
+                  );
+                  await DatabaseService().addPostReported(postReported.toMap());
+                  Fluttertoast.showToast(msg: 'Đã gửi báo cáo thành công!');
+                }catch(e){
+                  Fluttertoast.showToast(msg: 'Gửi báo cáo thất bại!');
+                }
+              },
+            ),
+            const SizedBox(width: 10),
+          ],),
+        ],
+      ),
+    );
+  }
+
+  //TODO: _edit/report
+  Future<void> _editReport(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context2) => AlertDialog(
+        title: const Text('Chọn thao tác'),
+        content: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * .8),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.of(context2).pop();
+                            PostDetailsPage.showPlz(context, widget.myUser, widget.post.id!);
+                          },
+                          child: const Text('Xem')),
+                    ),
+                    const Spacer(),
+                  ]),
+                  Row(children: [
+                    const Spacer(),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * .5,
+                        child: (widget.myUser.id==widget.post.createdBy)? TextButton(
+                            onPressed: () {
+                              Navigator.of(context2).pop();
+                              EditPostPage.showPlz(context,
+                                  myUser: widget.myUser,
+                                  post: widget.post,
+                              );
+                            },
+                            child: const Text('Chỉnh sửa')
+                        ) : TextButton(
+                            onPressed: () {
+                              Navigator.of(context2).pop();
+                              _showReportForm(context);
+                            },
+                            child: const Text('Báo cáo')
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                  ]),
+                ]),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1734,6 +1899,13 @@ class _PostBoxState extends State<PostBox> with TickerProviderStateMixin{
                           }),
                     ],
                   ),
+                ),
+
+                IconButton(
+                  icon: const Icon(Icons.more_horiz),
+                  onPressed: (){
+                    _editReport(context);
+                  },
                 ),
               ],
             ),
