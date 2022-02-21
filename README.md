@@ -1,3 +1,13 @@
+Bảo + Đô
+-	Xây dựng Restful APIs  Oauth2 hoặc JWT để chứng thực
+-	GraphQL (Django)
+-	Fornt-end: flutter
+-	Xây dựng cách thức cho người thắng + ower sp chuyển  liên lạc
+-	Gợi ý (recommendation): đăng vận chuyến 1 sp  rating, đánh giá cộng động, …  gợi y 1 shipper đáng tin (recommendation system)
+-	Gom cụm (clustering) (đăng rất nhiều  gom cụm các post gần giống nhau  gợi ý)
+-	Notification center  socket, push notitication
+-	Tên đề tài: PHÁT TRIỂN MẠNG XÃ HỘI VẬN CHUYỂN HÀNG ĐA NỀN TẢNG DỰA TRÊN FLUTTER
+
 # Demo Images
 
 https://drive.google.com/drive/folders/13ylKrUi8J4QydpEZ7korcCQU0gE4CbWZ?usp=sharing
