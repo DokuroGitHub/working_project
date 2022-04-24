@@ -1,7 +1,7 @@
 Bảo + Đô
 -	Xây dựng Restful APIs  Oauth2 hoặc JWT để chứng thực
--	GraphQL (Django)
--	Fornt-end: flutter
+-	GraphQL (Postgraphile)
+-	Front-end: flutter
 -	Xây dựng cách thức cho người thắng + ower sp chuyển  liên lạc
 -	Gợi ý (recommendation): đăng vận chuyến 1 sp  rating, đánh giá cộng động, …  gợi y 1 shipper đáng tin (recommendation system)
 -	Gom cụm (clustering) (đăng rất nhiều  gom cụm các post gần giống nhau  gợi ý)
